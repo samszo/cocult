@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoCult</title>
+    <script type="text/javascript" src="assets/js/d3.min.js"></script>
+    <script type="text/javascript" src="assets/js/exif.js"></script>
+    <style>
+        div{
+            margin:10px;
+        }
+        img{
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="collection"></h1>
+    <div id="filters"></div>
+    <div id="pins"></div>
+    <!--
+    <img id="img_1" src="assets/img/1684821608.jpeg"></img>
+    <img id="img_2" src="assets/img/img20230523062401.jpg"></img>
+    <img id="img_3" src="assets/img/IMG20230523062401-google.jpg"></img>
+    -->
+</body>
+<script type="module">
+    let collection = 'open-intangible-cultural-heritage',//'aubervilliers-tour',// 'cocult',//
+        urlForCollection = "https://www.historypin.org/en/api/"+collection+"/projects/get.json",
+        urlForPinsInCollection = "https://www.historypin.org/en/api/"+collection+"/pin/listing.json",
+        urlForPin = "http://www.historypin.org/en/api/pin/get.json?id=",
+        dataPins, tags=[];
+    Promise.all([d3.json(urlForCollection),d3.json(urlForPinsInCollection)]).then(datas=>{
+        console.log(datas);
+        d3.select('#collection').html(datas[0].name);
+        //construct query to get pin details
+        let querys=[];
+        dataPins = datas[1].results;
+        dataPins.forEach(p=>querys.push(d3.json(urlForPin+p.id)));
+        Promise.all(querys).then((pins) => {
+            console.log(pins);
+            pins.forEach(p=>{
+                p.tags.forEach(pt=>{
+                    let t = tags.findIndex(t=>t.id==pt.id);
+                    if(t==-1)tags.push({'id':pt.id,'t':pt.text,'pins':[p]});
+                    else tags[t].pins.push(p);
+                });
+            });
+            d3.select('#filters').selectAll('button').data(tags).enter().append('button')
+                .html(t=>t.t)
+                .on('click',filterPins);
+        });
+        filterPins(null);
+        //
+    })
+    function filterPins(e,filter) {
+        let data = filter ? filter.pins : dataPins;
+        d3.select('#pins').selectAll('div').remove();
+        let divs = d3.select('#pins').selectAll('div').data(data).enter()
+            .append('div')
+            .attr('id',p=>'id_'+p.id);
+        divs.append('h2').html(p=>p.caption);
+        divs.append('img')
+            .attr('id',p=>'img_'+p.id)
+            .attr('src',p=>p.image)
+            .each(getExif);
+    }
+    function getExif(p){
+        let data = EXIF.getData(document.getElementById("img_"+p.id), function() {
+            var make = EXIF.getTag(this, "Make");
+            var model = EXIF.getTag(this, "Model");
+            console.log(make);
+            console.log(model);
+            //var makeAndModel = document.getElementById("makeAndModel");
+            //makeAndModel.innerHTML = `${make} ${model}`;
+        });
+        console.log(data);
+    }
+    //getExif({'id':'1'});
+    //getExif({'id':'2'});
+    //getExif({'id':'3'});
+</script>
+
+</html>
