@@ -1,0 +1,5 @@
+o:id,skos:prefLabel,dcterms:isReferencedBy ^^uri,skos:notation,skos:altLabel @fr,skos:altLabel @en,skos:scopeNote @fr,skos:scopeNote @en,skos:broader ^^resource,skos:narrower ^^resource,skos:related ^^resource
+1313,Educational psychology,http://vocabularies.unesco.org/thesaurus/concept1049,1.05,Psychologie de l'éducation,Educational psychology,,,1323,78|609,37|1070|1282|1314|2306|3978
+1549,Feedback (learning),http://vocabularies.unesco.org/thesaurus/concept10756,1.05,Information en retour (apprentissage),Feedback (learning),,,2306,,
+4028,Teacher attitudes,http://vocabularies.unesco.org/thesaurus/concept1270,1.05,Attitude de l'enseignant,Teacher attitudes,,,4030,,653|3946|4042
+3946,Student attitudes,http://vocabularies.unesco.org/thesaurus/concept1272,1.05,Attitude de l'étudiant,Student attitudes,,,3947,,653|3945|3956|4028

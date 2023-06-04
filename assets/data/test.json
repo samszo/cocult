@@ -1,0 +1,120 @@
+{
+    "GETID3_VERSION": "1.9.21-202109171300",
+    "filesize": 4052533,
+    "filepath": "\/var\/www\/html\/artnum\/cocult\/files\/original",
+    "filename": "85f7cf455244969fb2537a2bf4006521db6ee4dd.jpg",
+    "filenamepath": "\/var\/www\/html\/artnum\/cocult\/files\/original\/85f7cf455244969fb2537a2bf4006521db6ee4dd.jpg",
+    "avdataoffset": 0,
+    "avdataend": 4052533,
+    "fileformat": "jpg",
+    "video": {
+        "dataformat": "jpg",
+        "lossless": false,
+        "bits_per_sample": 24,
+        "pixel_aspect_ratio": 1,
+        "resolution_x": 4096,
+        "resolution_y": 3072,
+        "compression_ratio": 0.1073554621802436
+    },
+    "encoding": "UTF-8",
+    "mime_type": "image\/jpeg",
+    "jpg": {
+        "exif": {
+            "FILE": {
+                "FileName": "85f7cf455244969fb2537a2bf4006521db6ee4dd.jpg",
+                "FileDateTime": 1685516744,
+                "FileSize": 4052533,
+                "FileType": 2,
+                "MimeType": "image\/jpeg",
+                "SectionsFound": "ANY_TAG, IFD0, EXIF, GPS"
+            },
+            "COMPUTED": {
+                "html": "width=\"4096\" height=\"3072\"",
+                "Height": 3072,
+                "Width": 4096,
+                "IsColor": 1,
+                "ByteOrderMotorola": 0,
+                "ApertureFNumber": "f\/1.8",
+                "UserComment": "oplus_0"
+            },
+            "IFD0": {
+                "ImageWidth": 4096,
+                "ImageLength": 3072,
+                "Make": "OPPO",
+                "Model": "OPPO Find X3 Neo 5G",
+                "Orientation": 1,
+                "XResolution": 72,
+                "YResolution": 72,
+                "ResolutionUnit": 2,
+                "DateTime": "2023:05:23 12:07:24",
+                "YCbCrPositioning": 1,
+                "Exif_IFD_Pointer": 220,
+                "GPS_IFD_Pointer": 908
+            },
+            "EXIF": {
+                "UndefinedTag:0x0001": "R98",
+                "UndefinedTag:0x0002": 1,
+                "ExposureTime": 0.00980392156862745,
+                "FNumber": 1.8,
+                "ExposureProgram": 2,
+                "ISOSpeedRatings": 100,
+                "ExifVersion": 220,
+                "DateTimeOriginal": "2023:05:23 12:07:24",
+                "DateTimeDigitized": "2023:05:23 12:07:24",
+                "UndefinedTag:0x9011": "+02:00",
+                "ComponentsConfiguration": "\u0001\u0002\u0003\u0000",
+                "ShutterSpeedValue": 6.676,
+                "ApertureValue": 1.69,
+                "BrightnessValue": 1.46,
+                "ExposureBiasValue": 0,
+                "MaxApertureValue": 1.69,
+                "MeteringMode": 2,
+                "Flash": 16,
+                "FocalLength": 5.59,
+                "MakerNote": "{\"PiFlag\":\"0\",\"nightFlag\":\"0\",\"nightMode\": \"0\",\"asdOut\": [\"0\"],\"iso\": \"416\",\"expTime\": \"9772962\",\"fType\":\"26\",\"bkMode\":\"17\",\"aideblur\":\"0\",\"aisState\":\"0\"}",
+                "UserComment": "oplus_0",
+                "SubSecTime": 350,
+                "SubSecTimeOriginal": 350,
+                "SubSecTimeDigitized": 350,
+                "FlashPixVersion": 100,
+                "ColorSpace": 1,
+                "ExifImageWidth": 0,
+                "ExifImageLength": 0,
+                "SensingMethod": 1,
+                "SceneType": "\u0001",
+                "ExposureMode": 0,
+                "WhiteBalance": 0,
+                "FocalLengthIn35mmFilm": 32,
+                "SceneCaptureType": 0
+            },
+            "GPS": {
+                "GPSLatitudeRef": "N",
+                "GPSLatitude": [
+                    "48\/1",
+                    "55\/1",
+                    "1997\/100"
+                ],
+                "GPSLongitudeRef": "E",
+                "GPSLongitude": [
+                    "2\/1",
+                    "22\/1",
+                    "779\/100"
+                ],
+                "GPSAltitudeRef": 0,
+                "GPSAltitude": "85300\/1000",
+                "GPSTimeStamp": [
+                    "10\/1",
+                    "7\/1",
+                    "20\/1"
+                ],
+                "GPSDateStamp": "2023:05:23",
+                "computed": {
+                    "timestamp": 943956440,
+                    "latitude": 48.922213888888884,
+                    "longitude": 2.3688305555555558,
+                    "altitude": 85.3
+                }
+            }
+        }
+    }
+}
