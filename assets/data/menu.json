@@ -1,0 +1,43 @@
+{
+    "name" : "menu",
+    "sources":"https://www.w3schools.com/charsets/ref_emoji.asp",
+    "color" : "magenta",
+    "children" : [{
+        "name" : "🌍",
+        "key" : "geo",
+        "class":"emoji",
+        "color" : "skyblue",
+        "size" : 1
+      },{
+      "key" : "plus",
+      "name" : "😊",
+      "class":"emoji",
+      "color" : "green",
+      "size" : 1,
+      "children" : [
+        {"size" : 1,"id": "vocabulary_ich_1227", "name": "Oral traditions and expressions"}, 
+        {"size" : 1,"id": "vocabulary_ich_1228", "name": "Performing arts"}, 
+        {"size" : 1,"id": "vocabulary_ich_1229", "name": "Social practices, rituals and festive events"}, 
+        {"size" : 1,"id": "vocabulary_ich_1230", "name": "Knowledge and practices on nature & the universe"},
+        {"size" : 1,"id": "vocabulary_ich_1231", "name": "Traditional craftsmanship"}
+
+      ]
+    },{
+      "name" : "😟",
+      "key" : "minus",
+      "color" : "red",
+      "class":"emoji",
+      "size" : 1,
+      "children" : [
+        { "size" : 1,"id": "vocabulary_ich_1268", "name": "Demographic issues"},
+        { "size" : 1,"id": "vocabulary_ich_1264", "name": "Environmental degradation"},
+        { "size" : 1,"id": "vocabulary_ich_1263", "name": "Cultural globalization"},
+        { "size" : 1,"id": "vocabulary_ich_1287", "name": "Decontextualization"},
+        { "size" : 1,"id": "vocabulary_ich_1265", "name": "Negative attitudes"},
+        { "size" : 1,"id": "vocabulary_ich_1284", "name": "New products & techniques"},
+        { "size" : 1,"id": "vocabulary_ich_1269", "name": "Loss of objects or systems"},
+        { "size" : 1,"id": "vocabulary_ich_1267", "name": "Economic pressure"},
+        { "size" : 1,"id": "vocabulary_ich_1286", "name": "Weakened pratice & transmission"}
+        ]
+    }]
+  }

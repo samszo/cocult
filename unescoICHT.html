@@ -6,178 +6,131 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CoCult - UNESCO Intangible Cultural Heritage Threats</title>
     <link href="assets/css/bootstrap5.3.min.css" rel="stylesheet" >
+    <link href="assets/css/menu.css" rel="stylesheet" >
     <script type="text/javascript" src="assets/js/d3.min.js"></script>
     <script src="assets/js/bootstrap5.3.bundle.min.js" ></script>
-    <script src="assets/js/menu-qualification.js" ></script>
+    <script src="assets/js/menuSunburst.js" ></script>
 </head>
 <body>
-    <table>
-        <thead>
-            <tr id="tTr">
-            </tr>
-        </thead>
-        <tbody id="tBody">
-        </tbody>
-    </table>
+    <div id="divMain" class="h-100 d-flex align-items-center justify-content-center">
+        <img id="imgSrc" src="assets/img/1684821608.jpeg" class="img-fluid" >
+        <div id="markers"></div>
+    </div>
+    <div id="popup"></div>
+    <div id="dataviz"></div>
 </body>
 <script type="module">
 import {auth} from './modules/auth.js';
+let curPosi, menu, dataMenu, unescoGraph, unescoVocabs=[], vs
+        , unescoEdgePredicate, unescoRegions=[],
+        markers = [], img = d3.select('#imgSrc'),
+        wM = 20, hM = 20; 
 
-let a = new auth({'navbar':d3.select('#navbarMain'),
-        mail:'samuel.szoniecky@univ-paris8.fr',
-        apiOmk:'https://artnum.univ-paris8.fr/cocult/api',
-        ident: 'kXaKZ6xsWlxkjjHKgwXh3lEz7QgZMLsF',
-        key:'5lu3xO1uh0QeGYyQSUAztqmcHC3hzeat',        
-    }), bulk = [], idsConcepts=[], omkConcepts;
-
+d3.select('body').style('height',window.innerHeight+'px');
+img.on('click',(e,d)=>{
+    curPosi = {'x':e.x,'y':e.y};
+    menu.showNew();
+})
+function updateMarkers(){
+    d3.select('#markers').selectAll('div').data(markers).join(
+            enter => {
+                enter.append('div').style('position','absolute')
+                    .style('top',d=>(d.posi.y-(hM/2))+'px')
+                    .style('left',d=>(d.posi.x-(wM/2))+'px')
+                    .style('height',hM+'px').style('width',wM+'px')
+                    .style('background',getGradient)
+                    .on('click',showMarkerData);       
+                },
+            update => {
+                update.style('top',d=>(d.posi.y-(hM/2))+'px')
+                    .style('left',d=>(d.posi.x-(wM/2))+'px');
+                },
+            exit => {
+                exit.remove();
+            });    
+}
+function getGradient(d){
+    return 'linear-gradient('+d.data.map(c=>c.color).join()+')';
+}
+function showMarkerData(e,d){
+    console.log(d);
+    d3.select('#popup')
+        .style('display','block')
+        .style('top',d.posi.y+(hM/2)+'px')
+        .style('left',d.posi.x+(wM/2)+'px')
+        .on('click',hideMarkerData)       
+        .selectAll('div').data(d.data).join(
+            enter => {
+                enter.append('div')
+                    .style('padding','3px')
+                    .style('background-color',d=>d.color)
+                    .html(d=>d.name)
+                },
+            update => {
+                update.style('background-color',d=>d.color)
+                    .html(d=>d.name)
+                },
+            exit => {
+                exit.remove();
+            });       
+}
+function hideMarkerData(e){
+    d3.select(e.currentTarget).style('display','none');
+}
+/*
+a = new auth({'navbar':d3.select('#navbarMain'),
+    mail:'samuel.szoniecky@univ-paris8.fr',
+    apiOmk:'https://artnum.univ-paris8.fr/cocult/api',
+    ident: 'kXaKZ6xsWlxkjjHKgwXh3lEz7QgZMLsF',
+    key:'5lu3xO1uh0QeGYyQSUAztqmcHC3hzeat',        
+}), bulk = [], idsConcepts=[], omkConcepts;
 a.getUser(u=>{
     console.log(u);
 });
-
-menu = new MenuQualification({
-				'idCont':"dataviz",
-				'width':200,
-				'data' : [],
-				'callback' : function(selectedItems) {
-					console.log("selectedItems");
-					//$(".result").text(JSON.stringify(omkData, undefined, 4));
-					var selected = [];
-					$.each(selectedItems, function(index, itemData) {
-						selected.push(itemData.data.omkId);
-					});
-					self.resultData.selected = selected;
-					//$(".boutonQualifier").removeClass("hidden");
-					self.serializeResult(function(omkData) {
-						console.log("Send qualification to server ...");						
-						console.log(JSON.stringify(omkData, undefined, 4));
-						self.sendResult(omkData);
-					});
-					self.deselectInfo();
-					self.closeMenu();
-				}
-			});
-
-
-//charge les données unesco de omeka
-/*
-omkConcepts = a.omk.getAllItems("item_set_id[]=26");
-a.omk.saveJson(omkConcepts);
 */
-d3.json('vocabs/omkUnesco.json').then(data=>{
-    omkConcepts = data;
-    getBulkConceptHierarchyRelated();
-})
-function getBulkConceptHierarchyRelated(){
-    //charge les données de relation pour les concepts unesco
-    //cf. https://vocabularies.unesco.org/sparql?default-graph-uri=&query=PREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E+%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E+%0D%0APREFIX+isothes%3A+%3Chttp%3A%2F%2Fpurl.org%2Fiso25964%2Fskos-thes%23%3E+%0D%0ASELECT+%3FmtCode+%3FconceptId+%28STR%28%3FenglishLabel%29+AS+%3Fenglish%29+%28STR%28%3FfrenchLabel%29+AS+%3Ffrench%29+%3FsynonymsEnglish+%3FsynonymsFrench+%28STR%28%3FnoteEn%29+AS+%3FnoteEnglish%29+%28STR%28%3FnoteFr%29+AS+%3FnoteFrench%29+%3Fbroaders+%3Fnarrowers+%3Frelateds+WHERE+%7B%0D%0A++%3Fconcept+a+skos%3AConcept+.%0D%0A++BIND%28STRAFTER%28STR%28%3Fconcept%29%2C+%27http%3A%2F%2Fvocabularies.unesco.org%2Fthesaurus%2F%27%29+AS+%3FconceptId%29+++%3Fconcept+skos%3AprefLabel+%3FenglishLabel.%0D%0A++FILTER%28langMatches%28lang%28%3FenglishLabel%29%2C+%27en%27%29%29+++%3Fconcept+skos%3AprefLabel+%3FfrenchLabel.%0D%0A++FILTER%28langMatches%28lang%28%3FfrenchLabel%29%2C+%27fr%27%29%29+++%3Fmt+skos%3Amember+%3Fconcept+.%0D%0A++%3Fmt+skos%3Anotation+%3FmtCode+.%0D%0A++%7B%0D%0A++++SELECT+%3Fconcept+%28GROUP_CONCAT%28%3FaltLabelEnglish%3B%0D%0A++++++++separator%3D%27%2C+%27%29+AS+%3FsynonymsEnglish%29+++++WHERE+%7B%0D%0A++++++%3Fconcept+a+skos%3AConcept+.%0D%0A++++++OPTIONAL+%7B%0D%0A++++++++%3Fconcept+skos%3AaltLabel+%3FaltLabelEnglish+.%0D%0A++++++++FILTER%28langMatches%28lang%28%3FaltLabelEnglish%29%2C+%27en%27%29%29+++++++++%0D%0A++++++%7D+++++%0D%0A++++%7D+GROUP+BY+%3Fconcept+++%0D%0A++%7D+++%7B%0D%0A++++SELECT+%3Fconcept+%28GROUP_CONCAT%28%3FaltLabelFrench%3B%0D%0A++++++++separator%3D%27%2C+%27%29+AS+%3FsynonymsFrench%29+++++WHERE+%7B%0D%0A++++++%3Fconcept+a+skos%3AConcept+.%0D%0A++++++OPTIONAL+%7B%0D%0A++++++++%3Fconcept+skos%3AaltLabel+%3FaltLabelFrench+.%0D%0A++++++++FILTER%28langMatches%28lang%28%3FaltLabelFrench%29%2C+%27fr%27%29%29+++++++++%0D%0A++++++%7D+++++%0D%0A++++%7D+GROUP+BY+%3Fconcept+++%0D%0A++%7D+++OPTIONAL+%7B%0D%0A++++%3Fconcept+skos%3AscopeNote+%3FnoteEn+.%0D%0A++++FILTER%28langMatches%28lang%28%3FnoteEn%29%2C+%27en%27%29%29+++%0D%0A++%7D+++OPTIONAL+%7B%0D%0A++++%3Fconcept+skos%3AscopeNote+%3FnoteFr+.%0D%0A++++FILTER%28langMatches%28lang%28%3FnoteFr%29%2C+%27fr%27%29%29+++%0D%0A++%7D+++%7B%0D%0A++++SELECT+%3Fconcept+%28GROUP_CONCAT%28STR%28%3FbroaderShort%29%3B%0D%0A++++++++separator%3D%27%2C+%27%29+AS+%3Fbroaders%29+++++WHERE+%7B%0D%0A++++++%3Fconcept+a+skos%3AConcept+.%0D%0A++++++OPTIONAL+%7B%0D%0A++++++++%3Fconcept+skos%3Abroader+%3Fbroader+.%0D%0A++++++++BIND%28STRAFTER%28STR%28%3Fbroader%29%2C+%27http%3A%2F%2Fvocabularies.unesco.org%2Fthesaurus%2F%27%29+AS+%3FbroaderShort%29+++++++++%0D%0A++++++%7D+++++%0D%0A++++%7D+GROUP+BY+%3Fconcept+++%0D%0A++%7D+++%7B%0D%0A++++SELECT+%3Fconcept+%28GROUP_CONCAT%28STR%28%3FnarrowerShort%29%3B%0D%0A++++++++separator%3D%27%2C+%27%29+AS+%3Fnarrowers%29+++++WHERE+%7B%0D%0A++++++%3Fconcept+a+skos%3AConcept+.%0D%0A++++++OPTIONAL+%7B%0D%0A++++++++%3Fconcept+skos%3Anarrower+%3Fnarrower+.%0D%0A++++++++BIND%28STRAFTER%28STR%28%3Fnarrower%29%2C+%27http%3A%2F%2Fvocabularies.unesco.org%2Fthesaurus%2F%27%29+AS+%3FnarrowerShort%29+++++++++%0D%0A++++++%7D+++++%0D%0A++++%7D+GROUP+BY+%3Fconcept+++%0D%0A++%7D+++%7B%0D%0A++++SELECT+%3Fconcept+%28GROUP_CONCAT%28%3FrelatedShort%3B%0D%0A++++++++separator%3D%27%2C+%27%29+AS+%3Frelateds%29+++++WHERE+%7B%0D%0A++++++%3Fconcept+a+skos%3AConcept+.%0D%0A++++++OPTIONAL+%7B%0D%0A++++++++%3Fconcept+skos%3Arelated+%3Frelated+.%0D%0A++++++++BIND%28STRAFTER%28STR%28%3Frelated%29%2C+%27http%3A%2F%2Fvocabularies.unesco.org%2Fthesaurus%2F%27%29+AS+%3FrelatedShort%29+++++++++%0D%0A++++++%7D+++++%0D%0A++++%7D+GROUP+BY+%3Fconcept+++%0D%0A++%7D+%0D%0A%7D++ORDER+BY+%3FmtCode+%3FconceptId&format=application%2Fsparql-results%2Bxml&stylesheet=%2Fsparql-form%2Fxsl%2Fxml-to-html.xsl&stylesheet=%2Fsparql-form%2Fxsl%2Fxml-to-html.xsl
-    d3.csv("vocabs/unescoConceptsHierarchyRelated.csv").then(data=>{
-        data.forEach(e => {            
-            //traite les concepts en relation
-            let b={'o:id':getIdConcept('',e['conceptId']),
-                'titreFr':e.french, 'titreEn':e.english,
-                'noteFr':e.noteFrench,'noteEn':e.noteEnglish,
-                'notation':e.mtCode,'ref':'http://vocabularies.unesco.org/thesaurus/'+e['conceptId'], 
-                'skos:related':'','skos:narrower':'','skos:broader':''
-            };
-            e.relateds.split(', ').forEach(c=>{
-                b['skos:related']+=getIdConcept('',c)+'|';                    
-            })
-            e.broaders.split(', ').forEach(c=>{
-                b['skos:broader']+=getIdConcept('',c)+'|';                    
-            })
-            e.narrowers.split(', ').forEach(c=>{
-                b['skos:narrower']+=getIdConcept('',c)+'|';                    
-            })
-                        
-            bulk.push(b);
-        });
-        //ajoute les entêtes de colonnes
-        d3.select('#tTr').select('th').data(['o:id','skos:prefLabel','dcterms:isReferencedBy ^^uri','skos:notation','skos:altLabel @fr','skos:altLabel @en','skos:scopeNote @fr','skos:scopeNote @en','skos:broader ^^resource','skos:narrower ^^resource','skos:related ^^resource'])
-            .enter().append('th').html(t=>t);
-        //ajoutes le lignes
-        let lines = d3.select('#tBody').select('tr')
-            .data(bulk).enter().append('tr');
-        lines.append('td').html(b=>b['o:id']);
-        lines.append('td').html(b=>b.titreEn);
-        lines.append('td').html(b=>b.ref);
-        lines.append('td').html(b=>b.notation);
-        lines.append('td').html(b=>b.titreFr);
-        lines.append('td').html(b=>b.titreEn);
-        lines.append('td').html(b=>b.noteFr);
-        lines.append('td').html(b=>b.noteEn);
-        lines.append('td').html(b=>b['skos:broader'].slice(0,-1).replace('-1',''));
-        lines.append('td').html(b=>b['skos:narrower'].slice(0,-1).replace('-1',''));
-        lines.append('td').html(b=>b['skos:related'].slice(0,-1).replace('-1',''));
 
-    })
-}
-
-function getBulkConceptHierarchy(){
-    //charge les données hiérarchiques pour les concepts unesco
-    //cf. https://vocabularies.unesco.org/sparql?default-graph-uri=&query=PREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E+%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E+%0D%0APREFIX+isothes%3A+%3Chttp%3A%2F%2Fpurl.org%2Fiso25964%2Fskos-thes%23%3E+%0D%0APREFIX+text%3A+%3Chttp%3A%2F%2Fjena.apache.org%2Ftext%23%3E+SELECT+%3FmtCode%3Fl1Label+%3Fl2Label+%3Fl3Label+%3Fl4Label+%3Fl5Label+%3Fl6Label+%3Fl7Label+WHERE+%7B%0D%0A++%3Flevel1+a+skos%3AConcept+.%0D%0A++%3Flevel1+%5Eskos%3AhasTopConcept+%3Fthesaurus+.%0D%0A++%3Fmt+skos%3Amember+%3Flevel1+.%0D%0A++%3Fmt+skos%3Anotation+%3FmtCode+.%0D%0A++%3Flevel1+skos%3AprefLabel+%3Fl1+.%0D%0A++FILTER%28langMatches%28lang%28%3Fl1%29%2C+%27en%27%29%29+++BIND%28STR%28%3Fl1%29+AS+%3Fl1Label%29+++OPTIONAL+%7B%0D%0A++++%7B%0D%0A++++++%3Flevel1+skos%3Anarrower+%3Flevel2+.%0D%0A++++++%3Flevel2+skos%3AprefLabel+%3Fl2+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl2%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl2%29+AS+%3Fl2Label%29+++++%0D%0A++++%7D+++++UNION+++++%7B%0D%0A++++++%3Flevel1+skos%3Anarrower+%3Flevel2+.%0D%0A++++++%3Flevel2+skos%3Anarrower+%3Flevel3+.%0D%0A++++++%3Flevel2+skos%3AprefLabel+%3Fl2+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl2%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl2%29+AS+%3Fl2Label%29+++++++%3Flevel3+skos%3AprefLabel+%3Fl3+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl3%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl3%29+AS+%3Fl3Label%29+++++%0D%0A++++%7D+++++UNION+++++%7B%0D%0A++++++%3Flevel1+skos%3Anarrower+%3Flevel2+.%0D%0A++++++%3Flevel2+skos%3Anarrower+%3Flevel3+.%0D%0A++++++%3Flevel3+skos%3Anarrower+%3Flevel4+.%0D%0A++++++%3Flevel2+skos%3AprefLabel+%3Fl2+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl2%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl2%29+AS+%3Fl2Label%29+++++++%3Flevel3+skos%3AprefLabel+%3Fl3+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl3%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl3%29+AS+%3Fl3Label%29+++++++%3Flevel4+skos%3AprefLabel+%3Fl4+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl4%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl4%29+AS+%3Fl4Label%29+++++++%0D%0A++++%7D+++++UNION+++++%7B%0D%0A++++++%3Flevel1+skos%3Anarrower+%3Flevel2+.%0D%0A++++++%3Flevel2+skos%3Anarrower+%3Flevel3+.%0D%0A++++++%3Flevel3+skos%3Anarrower+%3Flevel4+.%0D%0A++++++%3Flevel4+skos%3Anarrower+%3Flevel5+.%0D%0A++++++%3Flevel2+skos%3AprefLabel+%3Fl2+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl2%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl2%29+AS+%3Fl2Label%29+++++++%3Flevel3+skos%3AprefLabel+%3Fl3+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl3%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl3%29+AS+%3Fl3Label%29+++++++%3Flevel4+skos%3AprefLabel+%3Fl4+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl4%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl4%29+AS+%3Fl4Label%29+++++++%3Flevel5+skos%3AprefLabel+%3Fl5+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl5%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl5%29+AS+%3Fl5Label%29+++++++%0D%0A++++%7D+++++UNION+++++%7B%0D%0A++++++%3Flevel1+skos%3Anarrower+%3Flevel2+.%0D%0A++++++%3Flevel2+skos%3Anarrower+%3Flevel3+.%0D%0A++++++%3Flevel3+skos%3Anarrower+%3Flevel4+.%0D%0A++++++%3Flevel4+skos%3Anarrower+%3Flevel5+.%0D%0A++++++%3Flevel5+skos%3Anarrower+%3Flevel6+.%0D%0A++++++%3Flevel2+skos%3AprefLabel+%3Fl2+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl2%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl2%29+AS+%3Fl2Label%29+++++++%3Flevel3+skos%3AprefLabel+%3Fl3+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl3%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl3%29+AS+%3Fl3Label%29+++++++%3Flevel4+skos%3AprefLabel+%3Fl4+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl4%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl4%29+AS+%3Fl4Label%29+++++++%3Flevel5+skos%3AprefLabel+%3Fl5+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl5%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl5%29+AS+%3Fl5Label%29+++++++%3Flevel6+skos%3AprefLabel+%3Fl6+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl6%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl6%29+AS+%3Fl6Label%29++++++%0D%0A++++%7D+++++UNION+++++%7B%0D%0A++++++%3Flevel1+skos%3Anarrower+%3Flevel2+.%0D%0A++++++%3Flevel2+skos%3Anarrower+%3Flevel3+.%0D%0A++++++%3Flevel3+skos%3Anarrower+%3Flevel4+.%0D%0A++++++%3Flevel4+skos%3Anarrower+%3Flevel5+.%0D%0A++++++%3Flevel5+skos%3Anarrower+%3Flevel6+.%0D%0A++++++%3Flevel6+skos%3Anarrower+%3Flevel7+.%0D%0A++++++%3Flevel2+skos%3AprefLabel+%3Fl2+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl2%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl2%29+AS+%3Fl2Label%29+++++++%3Flevel3+skos%3AprefLabel+%3Fl3+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl3%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl3%29+AS+%3Fl3Label%29+++++++%3Flevel4+skos%3AprefLabel+%3Fl4+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl4%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl4%29+AS+%3Fl4Label%29+++++++%3Flevel5+skos%3AprefLabel+%3Fl5+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl5%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl5%29+AS+%3Fl5Label%29+++++++%3Flevel6+skos%3AprefLabel+%3Fl6+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl6%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl6%29+AS+%3Fl6Label%29+++++++%3Flevel7+skos%3AprefLabel+%3Fl7+.%0D%0A++++++FILTER%28langMatches%28lang%28%3Fl7%29%2C+%27en%27%29%29+++++++BIND%28STR%28%3Fl7%29+AS+%3Fl7Label%29++++++%0D%0A++++%7D+++%0D%0A++%7D+%0D%0A%7D++ORDER+BY+%3FmtCode+%3Fl1Label+%3Fl2Label+%3Fl3Label+%3Fl4Label+%3Fl5Label+%3Fl6Label+%3Fl7Label&format=application%2Fsparql-results%2Bxml&stylesheet=%2Fsparql-form%2Fxsl%2Fxml-to-html.xsl&stylesheet=%2Fsparql-form%2Fxsl%2Fxml-to-html.xsl 
-    d3.csv("vocabs/unescoConceptsHierarchy.csv").then(data=>{
-        data.forEach(e => {
-            //boucle sur la hiérarchie
-            for (let i = 1; i < 8; i++){
-                //récupère l'item correspondant à la hiérarchie
-                let b=[], id = getIdConcept(e['l'+i+'Label']), 
-                    idN = 0, 
-                    idB = 0;
-                if(id > 0){
-                    //construction du tableau d'import   
-                    b['o:id']=id;
-                    if(i>1)idB=getIdConcept(e['l'+(i-1)+'Label']);
-                    if(i<6)idN=getIdConcept(e['l'+(i+1)+'Label']);
-                    if(idB>0)b['skos:broader']=idB;
-                    if(idN>0)b['skos:narrower']=idN;
-                    bulk.push(b);
-                }        
-            }
-        });
-        //regroupe les données
-        let gBulk = Array.from(d3.group(bulk, b => b['o:id']), ([key, value]) => ({key, value})),
-        //affiche les données d'import
-                //ajoute les entêtes de colonnes
-        entete = d3.select('#tTr').select('th').data(['o:id','skos:broader ^^resource','skos:narrower ^^resource'])
-            .enter().append('th').html(t=>t),
-        lines = d3.select('#tBody').select('tr')
-            .data(gBulk).enter().append('tr');
-        lines.append('td').html(l=>{
-            return l.key;
-        })
-        lines.append('td').html(l=>{
-            let unique = [...new Set(l.value.filter(b=>b['skos:broader']).map(b => b['skos:broader']))];
-            return unique.join("; ");
-        })
-        lines.append('td').html(l=>{
-            let unique = [...new Set(l.value.filter(b=>b['skos:narrower']).map(b => b['skos:narrower']))];
-            return unique.join("; ");
-        })
-
-    })
-}
-function getIdConcept(lbl,id){
-    if(!idsConcepts[lbl ? lbl : id]){
-        /*méthode trop gourmande
-        let q = "property[0][property]=288&property[0][type]=eq&property[0][text]="+lbl
-            +"&item_set_id[]=26",
-            items = a.omk.getAllItems(q);
-        */
-        let items = lbl ? 
-            omkConcepts.filter(o=>o['o:title']==lbl) 
-            : omkConcepts.filter(o=>getConceptId(o)==id);
-        if(items.length==1){
-            idsConcepts[lbl ? lbl : id]=items[0]['o:id'];
-        }else{
-            console.log("ERREUR "+lbl+" "+id+" nb="+items.length);
-            idsConcepts[lbl ? lbl : id]=-1;
-        }
+Promise.all([d3.json('assets/data/menu.json'),d3.json('assets/data/unesco_graph_en.json')]).then(datas=>{
+    dataMenu=datas[0];
+    unescoGraph = datas[1];
+    //get concepts
+    for (const key in unescoGraph.nodes) {
+        const e = unescoGraph.nodes[key];
+        e.k = key;
+        if(e.type=="concept")unescoVocabs.push(e);
+        if(e.type=="region" && e.label!="")unescoRegions.push(e);
     }
-    return idsConcepts[lbl ? lbl : id];
-} 
-function getConceptId(o){
-    return o['dcterms:isReferencedBy'][0]['@value'].replace('http://vocabularies.unesco.org/thesaurus/','');
-}
+    //get concepts uses
+    unescoGraph.edges.forEach(e=>{
+        if(e.object.substr(0,21)=='vocabulary_thesaurus_' 
+            || e.subject.substr(0,21)=='vocabulary_thesaurus_'){
+            vs = unescoVocabs.filter(vc=>vc.k==e.object);
+            vs.forEach(v=>v.weight = v.weight ? v.weight + e.weight : e.weight);
+            vs = unescoVocabs.filter(vc=>vc.k==e.subject);
+            vs.forEach(v=>v.weight = v.weight ? v.weight + e.weight : e.weight);
+        }        
+    })
+    //get type edge
+    unescoEdgePredicate = Array.from(d3.group(unescoGraph.edges, b => b.predicate), ([key, value]) => ({key, value})),
+
+    //update menuData
+    dataMenu.children[0].children = unescoRegions.map(r=>{
+        return {"size" : 1,"id": r.k, "name": r.label};
+    });
+
+    console.log(unescoVocabs);
+    menu  = new menuSunburst({
+        'idCont': "dataviz",
+        'data' : dataMenu,
+        'cbEndInit':'hide',
+        'cbValidate' : function(selectedItems) {
+            console.log("selectedItems",selectedItems);
+            markers.push({'posi':curPosi,'data':selectedItems.map(s=>s.data)});
+            updateMarkers();
+            menu.hideMenu();
+        }
+    });
+})
+
     
 </script>
 

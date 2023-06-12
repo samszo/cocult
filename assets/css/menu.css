@@ -1,0 +1,18 @@
+body {
+    height: 100%
+}
+#dataviz{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+}
+.emoji{
+    font-size: x-large;
+}
+#popup{
+    padding: 3px;
+    position: absolute;
+    background-color: white;
+}
