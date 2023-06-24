@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoCult - Tags</title>
+    <script type="text/javascript" src="assets/js/d3.min.js"></script>
+    <script src="assets/js/bootstrap5.3.bundle.min.js" ></script>
+    <script src="assets/js/all.min.js" ></script>
+    <script src="assets/js/menuSunburst.js" ></script>
+    <link href="assets/css/bootstrap5.3.min.css" rel="stylesheet" >
+    <link href="assets/css/menu.css" rel="stylesheet" >
+    <link href="assets/css/all.min.css" rel="stylesheet" >
+</head>
+<body>    
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="assets/img/logoeruagreen2.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+                CoCult
+            </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a id="btnTakePhoto" class="nav-link" href="#"><i class="fa-solid fa-camera-retro"></i></a>
+                  </li>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Walks
+                </a>
+                <ul id="ddWalks" class="dropdown-menu">
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a id="selectWalk" class="nav-link" href="#">Select a walk</a>
+              </li>
+
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Sieves
+                </a>
+                <ul id="ddSieves" class="dropdown-menu">
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a id="selectSieve" class="nav-link" href="#"></a>
+              </li>
+
+            </ul>
+      </div>
+</div>
+      </nav>
+    <div id="divMain" class="h-100 d-flex align-items-center justify-content-center">
+        <div id="loading-container">
+            <div class="loadingio-spinner-double-ring-4dols36ufwg" id="ws-loading">
+                <div class="ldio-6pd26u1x99x">
+                <div></div>
+                <div></div>
+                <div><div></div></div>
+                <div><div></div></div>
+            </div></div>
+        </div>
+    
+        <div id="carouselCocult" class="carousel slide"  >
+            <div id="carouselItems" class="carousel-inner">
+
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselCocult" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselCocult" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+    <div id="popup"></div>
+    <div id="dataviz"></div>
+
+    <div id='modalTakePhoto' class="modal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Photo</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="inputText" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="inputText" placeholder="precise title">
+                  </div>
+                  <div class="mb-3">
+                    <label for="formFile" class="form-label">Take photo</label>
+                    <input class="form-control" type="file" id="formFile">
+                  </div>                  
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button id="btnSendPhoto" type="button" class="btn btn-danger" data-bs-dismiss="modal">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+</body>
+<script type="module">
+import {auth} from './modules/auth.js';
+import {omk} from './modules/omk.js';
+let curPosi, curMedia, menu, dataMenu, unescoGraph, unescoVocabs=[], vs
+        , unescoEdgePredicate, unescoRegions=[], medias,
+        carousel, walks,
+        wM = 20, hM = 20, 
+        a = new auth({'navbar':d3.select('#navbarMain'),
+            mail:'samuel.szoniecky@univ-paris8.fr',
+            apiOmk:'omk/api',
+            ident: 'kXaKZ6xsWlxkjjHKgwXh3lEz7QgZMLsF',
+            key:'5lu3xO1uh0QeGYyQSUAztqmcHC3hzeat',        
+        }),
+        modalTakePhoto = new bootstrap.Modal(document.getElementById('modalTakePhoto'), 
+        {keyboard: false});
+a.getUser(u=>{
+    console.log(u);
+});
+walks = a.omk.searchItems('item_set_id=4499');
+d3.select('#btnTakePhoto').on('click',showTakePhoto);
+d3.select('#btnSendPhoto').on('click',e=>{
+    let data = {'dcterms:title':document.getElementById("inputText").value,
+                'file':document.querySelector("#formFile").files[0]
+                };
+    a.omk.createRessource(data,(e,d)=>{
+        console.log(e,d);
+    }); 
+});
+
+
+Promise.all([d3.json('assets/data/menu.json'),
+        d3.json('assets/data/unesco_graph_en.json'
+    )]).then(datas=>{
+    dataMenu=datas[0];
+    unescoGraph = datas[1];
+    setSieve(null,dataMenu[0]);
+    //update menus
+    d3.select('#ddWalks').selectAll('li').data(walks).enter().append('li')
+        .append('a').attr('class',"dropdown-item")
+        .html(d=>d['o:title'])
+        .on('click',showWalk);
+    d3.select('#ddSieves').selectAll('li').data(dataMenu).enter().append('li')
+        .append('a').attr('class',"dropdown-item")
+        .html(d=>d.name)
+        .on('click',setSieve);
+
+    //get concepts
+    for (const key in unescoGraph.nodes) {
+        const e = unescoGraph.nodes[key];
+        e.k = key;
+        if(e.type=="concept")unescoVocabs.push(e);
+        if(e.type=="region" && e.label!="")unescoRegions.push(e);
+    }
+    //get concepts uses
+    unescoGraph.edges.forEach(e=>{
+        if(e.object.substr(0,21)=='vocabulary_thesaurus_' 
+            || e.subject.substr(0,21)=='vocabulary_thesaurus_'){
+            vs = unescoVocabs.filter(vc=>vc.k==e.object);
+            vs.forEach(v=>v.weight = v.weight ? v.weight + e.weight : e.weight);
+            vs = unescoVocabs.filter(vc=>vc.k==e.subject);
+            vs.forEach(v=>v.weight = v.weight ? v.weight + e.weight : e.weight);
+        }        
+    })
+    //get type edge
+    //unescoEdgePredicate = Array.from(d3.group(unescoGraph.edges, b => b.predicate), ([key, value]) => ({key, value})),
+    hideLoader();
+})
+function showTakePhoto(e){
+    modalTakePhoto.show();
+}
+function setSieve(e,d){
+    showLoader();
+    d3.json(d.sources).then(data=>{
+        switch (d.function) {
+            case "menuUnesco":
+                data.children[0].children = unescoRegions.map(r=>{
+                    return {"size" : 1,"id": r.k, "name": r.label};
+                });                
+                break;
+        }
+        d3.select("#dataviz").select('svg').remove();
+        d3.select("#selectSieve").html(d.name);
+        //console.log(unescoVocabs);
+        menu  = new menuSunburst({
+            'idCont': "dataviz",
+            'data' : data,
+            'cbEndInit':'hide',
+            'cbValidate' : function(selectedItems) {
+                console.log("selectedItems",selectedItems);
+                curMedia['oa:hasBody'].push({
+                    'actant':a.omk.mail,
+                    'sieves':d,
+                    'posi':curPosi,
+                    'data':selectedItems.map(s=>s.data),
+                    'timestamp':Date.now()
+                });
+                updateMarkers(curMedia);
+                //ste update data to omk
+                let updMedia = JSON.parse(JSON.stringify(curMedia)),
+                    body = a.omk.formatData({'oa:hasBody':updMedia['oa:hasBody']});
+                updMedia['oa:hasBody']=body['oa:hasBody'];
+                a.omk.updateRessource(updMedia['o:id'],null,markersIsSave,'media',updMedia);
+                menu.hideMenu();
+            }
+        });
+        hideLoader();
+    });    
+}
+function markersIsSave(d){
+    console.log(d);
+}
+function showWalk(e,d){
+    //get medias from cocult site walk
+    showLoader();
+    d3.select('#selectWalk').html(d['o:title']);
+    if(!d.medias){
+        a.omk.getMedias(d);
+        d.medias.forEach(m=>{
+            if(m['oa:hasBody']){
+                m['oa:hasBody']=m['oa:hasBody'].map(b=>b['@value']?JSON.parse(b['@value']):b);
+            }
+        })
+    }
+
+    d3.select('#carouselItems').selectAll('div').remove();
+    let myCarousel = document.querySelector('#carouselCocult'),
+        slides = d3.select('#carouselItems').selectAll('div').data(d.medias).enter().append('div')
+        .attr("class",(d,i)=>"carousel-item"+(i==0 ? ' active' : ' '));
+    slides.append('img')
+        .attr('src',d=>d.thumbnail_display_urls.large)
+        .attr('class',"d-block w-100")
+        .on('click',(e,d)=>{
+            curPosi = {'x':e.layerX,'y':e.layerY};
+            curMedia = d;
+            if(!curMedia['oa:hasBody'])curMedia['oa:hasBody'] = []
+            else curMedia['oa:hasBody']=curMedia['oa:hasBody'].map(b=>b['@value']?JSON.parse(b['@value']):b);
+            menu.showNew();
+        });
+    slides.append('div').attr('class','clearfix markers').attr('id',d=>'markers'+d['o:id']);
+    carousel = new bootstrap.Carousel(myCarousel, {
+                interval : 3000,
+                ride : false
+            });
+    myCarousel.addEventListener('slide.bs.carousel', event => {
+        //show markers of slide
+        curMedia = d.medias[(event.to)]
+        updateMarkers(curMedia);
+    })            
+    //carousel.cycle();    
+    //show markers of first slide
+    curMedia = d.medias[0]
+    updateMarkers(curMedia);
+
+    hideLoader();
+
+}
+function updateMarkers(d){
+    if(!d['oa:hasBody'])return;
+    d3.select('#markers'+d['o:id']).selectAll('div').data(d['oa:hasBody']).join(
+            enter => {
+                enter.append('div').style('position','absolute')
+                    .style('top',d=>(d.posi.y-(hM/2))+'px')
+                    .style('left',d=>(d.posi.x-(wM/2))+'px')
+                    .style('height',hM+'px').style('width',wM+'px')
+                    .style('background',getGradient)
+                    .on('click',showMarkerData);       
+                },
+            update => {
+                update.style('top',d=>(d.posi.y-(hM/2))+'px')
+                    .style('left',d=>(d.posi.x-(wM/2))+'px');
+                },
+            exit => {
+                exit.remove();
+            });    
+}
+function getGradient(d){
+    return 'linear-gradient('+d.data.map(c=>c.color).join()+')';
+}
+function showMarkerData(e,d){
+    console.log(d);
+    d3.select('#popup')
+        .style('display','block')
+        .style('top',d.posi.y+(hM/2)+'px')
+        .style('left',d.posi.x+(wM/2)+'px')
+        .on('click',hideMarkerData)       
+        .selectAll('div').data(d.data).join(
+            enter => {
+                enter.append('div')
+                    .style('padding','3px')
+                    .style('background-color',d=>d.color)
+                    .html(d=>d.name)
+                },
+            update => {
+                update.style('background-color',d=>d.color)
+                    .html(d=>d.name)
+                },
+            exit => {
+                exit.remove();
+            });       
+}
+function hideMarkerData(e){
+    d3.select(e.currentTarget).style('display','none');
+}
+function showLoader() {
+	d3.select("#ws-loading").style("display", "inline-block")
+}
+function hideLoader() {
+	d3.select("#ws-loading").style("display", "none")
+}
+
+
+    
+</script>
+
+</html>

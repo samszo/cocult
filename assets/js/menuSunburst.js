@@ -60,7 +60,7 @@ class menuSunburst {
         };
 
 		// init
-		console.log(me.data);
+		//console.log(me.data);
 		me.root = partition(me.data);
 		color = d3.scaleOrdinal().range(d3.quantize(d3.interpolateRainbow, me.data.children.length + 1));
 

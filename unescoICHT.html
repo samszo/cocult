@@ -21,10 +21,63 @@
 </body>
 <script type="module">
 import {auth} from './modules/auth.js';
+import {omk} from './modules/omk.js';
 let curPosi, menu, dataMenu, unescoGraph, unescoVocabs=[], vs
-        , unescoEdgePredicate, unescoRegions=[],
+        , unescoEdgePredicate, unescoRegions=[], medias,
         markers = [], img = d3.select('#imgSrc'),
-        wM = 20, hM = 20; 
+        wM = 20, hM = 20, 
+        a = new auth({'navbar':d3.select('#navbarMain'),
+            mail:'samuel.szoniecky@univ-paris8.fr',
+            apiOmk:'https://artnum.univ-paris8.fr/cocult/api',
+            ident: 'kXaKZ6xsWlxkjjHKgwXh3lEz7QgZMLsF',
+            key:'5lu3xO1uh0QeGYyQSUAztqmcHC3hzeat',        
+        });
+a.getUser(u=>{
+    console.log(u);
+});
+
+Promise.all([d3.json('assets/data/menu.json'),d3.json('assets/data/unesco_graph_en.json')]).then(datas=>{
+    dataMenu=datas[0];
+    unescoGraph = datas[1];
+    
+    //get concepts
+    for (const key in unescoGraph.nodes) {
+        const e = unescoGraph.nodes[key];
+        e.k = key;
+        if(e.type=="concept")unescoVocabs.push(e);
+        if(e.type=="region" && e.label!="")unescoRegions.push(e);
+    }
+    //get concepts uses
+    unescoGraph.edges.forEach(e=>{
+        if(e.object.substr(0,21)=='vocabulary_thesaurus_' 
+            || e.subject.substr(0,21)=='vocabulary_thesaurus_'){
+            vs = unescoVocabs.filter(vc=>vc.k==e.object);
+            vs.forEach(v=>v.weight = v.weight ? v.weight + e.weight : e.weight);
+            vs = unescoVocabs.filter(vc=>vc.k==e.subject);
+            vs.forEach(v=>v.weight = v.weight ? v.weight + e.weight : e.weight);
+        }        
+    })
+    //get type edge
+    unescoEdgePredicate = Array.from(d3.group(unescoGraph.edges, b => b.predicate), ([key, value]) => ({key, value})),
+
+    //update menuData
+    dataMenu.children[0].children = unescoRegions.map(r=>{
+        return {"size" : 1,"id": r.k, "name": r.label};
+    });
+
+    console.log(unescoVocabs);
+    menu  = new menuSunburst({
+        'idCont': "dataviz",
+        'data' : dataMenu,
+        'cbEndInit':'hide',
+        'cbValidate' : function(selectedItems) {
+            console.log("selectedItems",selectedItems);
+            markers.push({'posi':curPosi,'data':selectedItems.map(s=>s.data)});
+            updateMarkers();
+            menu.hideMenu();
+        }
+    });
+})
 
 d3.select('body').style('height',window.innerHeight+'px');
 img.on('click',(e,d)=>{
@@ -77,59 +130,7 @@ function showMarkerData(e,d){
 function hideMarkerData(e){
     d3.select(e.currentTarget).style('display','none');
 }
-/*
-a = new auth({'navbar':d3.select('#navbarMain'),
-    mail:'samuel.szoniecky@univ-paris8.fr',
-    apiOmk:'https://artnum.univ-paris8.fr/cocult/api',
-    ident: 'kXaKZ6xsWlxkjjHKgwXh3lEz7QgZMLsF',
-    key:'5lu3xO1uh0QeGYyQSUAztqmcHC3hzeat',        
-}), bulk = [], idsConcepts=[], omkConcepts;
-a.getUser(u=>{
-    console.log(u);
-});
-*/
 
-Promise.all([d3.json('assets/data/menu.json'),d3.json('assets/data/unesco_graph_en.json')]).then(datas=>{
-    dataMenu=datas[0];
-    unescoGraph = datas[1];
-    //get concepts
-    for (const key in unescoGraph.nodes) {
-        const e = unescoGraph.nodes[key];
-        e.k = key;
-        if(e.type=="concept")unescoVocabs.push(e);
-        if(e.type=="region" && e.label!="")unescoRegions.push(e);
-    }
-    //get concepts uses
-    unescoGraph.edges.forEach(e=>{
-        if(e.object.substr(0,21)=='vocabulary_thesaurus_' 
-            || e.subject.substr(0,21)=='vocabulary_thesaurus_'){
-            vs = unescoVocabs.filter(vc=>vc.k==e.object);
-            vs.forEach(v=>v.weight = v.weight ? v.weight + e.weight : e.weight);
-            vs = unescoVocabs.filter(vc=>vc.k==e.subject);
-            vs.forEach(v=>v.weight = v.weight ? v.weight + e.weight : e.weight);
-        }        
-    })
-    //get type edge
-    unescoEdgePredicate = Array.from(d3.group(unescoGraph.edges, b => b.predicate), ([key, value]) => ({key, value})),
-
-    //update menuData
-    dataMenu.children[0].children = unescoRegions.map(r=>{
-        return {"size" : 1,"id": r.k, "name": r.label};
-    });
-
-    console.log(unescoVocabs);
-    menu  = new menuSunburst({
-        'idCont': "dataviz",
-        'data' : dataMenu,
-        'cbEndInit':'hide',
-        'cbValidate' : function(selectedItems) {
-            console.log("selectedItems",selectedItems);
-            markers.push({'posi':curPosi,'data':selectedItems.map(s=>s.data)});
-            updateMarkers();
-            menu.hideMenu();
-        }
-    });
-})
 
     
 </script>

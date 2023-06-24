@@ -1,0 +1,23 @@
+{
+  "name": "menu",
+  "sources": "https://www.w3schools.com/charsets/ref_emoji.asp",
+  "color": "magenta",
+  "children": [
+    {"color":"#fa0204","n":"fierté","name":"😊","class": "emoji","size": 1},
+    {"color":"#e38700","n":"allégresse","name":"😇","class": "emoji","size": 1},
+    {"color":"#f8881a","n":"joie","name":"😀","class": "emoji","size": 1},
+    {"color":"#fbfd00","n":"satisfaction","name":"🙂","class": "emoji","size": 1},
+    {"color":"#ebfe0f","n":"soulagement","name":"😌","class": "emoji","size": 1},
+    {"color":"#b6f603","n":"espoir","name":"🤗","class": "emoji","size": 1},
+    {"color":"#52dc00","n":"intérêt","name":"🤔","class": "emoji","size": 1},
+    {"color":"#0bad00","n":"suprise","name":"😮","class": "emoji","size": 1},
+    {"color":"#00f98a","n":"tristesse","name":"😢","class": "emoji","size": 1},
+    {"color":"#01f7e2","n":"peur","name":"😱","class": "emoji","size": 1},
+    {"color":"#45b3b9","n":"honte","name":"😳","class": "emoji","size": 1},
+    {"color":"#569ec0","n":"culpabilité","name":"😟","class": "emoji","size": 1},
+    {"color":"#1e1ce4","n":"envie","name":"🤨","class": "emoji","size": 1},
+    {"color":"#4403ff","n":"dégout","name":"🤢","class": "emoji","size": 1},
+    {"color":"#aa348b","n":"mépris","name":"🙄","class": "emoji","size": 1},
+    {"color":"#c13b6c","n":"colère","name":"😡","class": "emoji","size": 1}
+  ]
+}
