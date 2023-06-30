@@ -52,10 +52,21 @@ export class omk {
             return r;
         }
 
-        this.getMedias=function(p){
+        this.getMedias=function(p,linkMedia=''){
             p.medias = [];
             p['o:media'].forEach(m=>{
                 p.medias.push(syncRequest(m['@id']))
+            })
+            if(linkMedia && p[linkMedia])me.getLinkMedias(p,linkMedia);
+        }
+        this.getLinkMedias=function(p,linkMedia){
+            p.medias = p.medias ? p.medias : [];
+            p[linkMedia].forEach(i=>{
+                let item = syncRequest(i['@id']);
+                me.getMedias(item);
+                item.medias.forEach(m=>{
+                    p.medias.push(m);
+                })
             })
         }
 
@@ -132,9 +143,9 @@ export class omk {
 
         }
 
-        this.updateRessource = function (id, data, cb=false, type='items', fd=null){
+        this.updateRessource = function (id, data, type='items', fd=null, m='PUT',cb=false){
             let url = me.api+type+'/'+id+'?key_identity='+me.ident+'&key_credential='+me.key;
-            postData({'u':url,'m':'PUT'}, fd ? fd : me.formatData(data,types[type])).then((rs) => {
+            postData({'u':url,'m':m}, fd ? fd : me.formatData(data,types[type])).then((rs) => {
                 if(cb)cb(rs);
             });
 
@@ -144,6 +155,9 @@ export class omk {
             let fd = {"@type" : type},p;
             for (let [k, v] of Object.entries(data)) {
                 switch (k) {
+                    case 'o:item_set':
+                        fd[k]=[{'o:id':v}];
+                        break;
                     case 'o:resource_class':
                         p = me.class.filter(prp=>prp['o:term']==v)[0];                        
                         fd[k]={'o:id':p['o:id']};            
@@ -196,7 +210,7 @@ export class omk {
                 referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
             };
             
-            if(url.m=='POST' || url.m=='PUT'){
+            if(url.m=='POST' || url.m=='PUT' || url.m=='PATCH'){
                 if(file){
                     bodyData = new FormData();
                     bodyData.append('data', JSON.stringify(data));

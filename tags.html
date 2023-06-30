@@ -9,9 +9,18 @@
     <script src="assets/js/bootstrap5.3.bundle.min.js" ></script>
     <script src="assets/js/all.min.js" ></script>
     <script src="assets/js/menuSunburst.js" ></script>
+    <script src="assets/js/jquery.min.js" ></script>
+    <script src="assets/js/typeahead.bundle.js" ></script>
+    <script src="assets/js/handlebars.min.js" ></script>
     <link href="assets/css/bootstrap5.3.min.css" rel="stylesheet" >
     <link href="assets/css/menu.css" rel="stylesheet" >
     <link href="assets/css/all.min.css" rel="stylesheet" >
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+        
 </head>
 <body>    
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -19,6 +28,11 @@
             <a class="navbar-brand" href="#">
                 <img src="assets/img/logoeruagreen2.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
                 CoCult
+                <i class="fa-solid fa-table-cells"></i>
+                <span id="selectSieve">Select a sieve</span>
+                <i class="fa-solid fa-person-walking"></i>
+                <span id="selectWalk">Select a walk</span>
+
             </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -31,55 +45,70 @@
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Walks
-                </a>
-                <ul id="ddWalks" class="dropdown-menu">
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a id="selectWalk" class="nav-link" href="#">Select a walk</a>
-              </li>
-
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Sieves
+                    <i class="fa-solid fa-table-cells"></i>
+                        Sieves
                 </a>
                 <ul id="ddSieves" class="dropdown-menu">
                 </ul>
               </li>
-              <li class="nav-item">
-                <a id="selectSieve" class="nav-link" href="#"></a>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-person-walking"></i>
+                    Walks
+                </a>
+                <ul id="ddWalks" class="dropdown-menu">
+                </ul>
               </li>
+              <li>
+                    <form autocomplete="off">
+                    <div class="input-group">
+                        <span class="input-group-text" id="url-addon">@</span>
+                        <input id="inptUrl" type="text" class="form-control" 
+                            size="64" placeholder="" aria-label="" aria-describedby="url-addon">
+                    </div>
+                    </form>
+                </li>                                                                        
+
 
             </ul>
       </div>
 </div>
       </nav>
-    <div id="divMain" class="h-100 d-flex align-items-center justify-content-center">
-        <div id="loading-container">
-            <div class="loadingio-spinner-double-ring-4dols36ufwg" id="ws-loading">
-                <div class="ldio-6pd26u1x99x">
-                <div></div>
-                <div></div>
-                <div><div></div></div>
-                <div><div></div></div>
-            </div></div>
-        </div>
-    
-        <div id="carouselCocult" class="carousel slide"  >
-            <div id="carouselItems" class="carousel-inner">
 
+
+    <div class="container-fluid px-0">
+      <div class="row g-0">
+  
+        <!-- First column -->
+        <div class="col">
+            <div id="carouselCocult" class="carousel slide"  >
+                <div id="carouselItems" class="carousel-inner">
+    
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselCocult" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselCocult" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselCocult" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselCocult" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
+
         </div>
+        <!-- First column -->
+  
+        <!-- Second column -->
+        <div class="col vh-100">
+            <div id="map" class="map"></div>
+  
+        </div>
+        <!-- Second column -->
+  
+      </div>
     </div>
+  
+    
     <div id="popup"></div>
     <div id="dataviz"></div>
 
@@ -91,14 +120,20 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <input id="getWalkId" type="hidden" value="">
+                <input id="getWalkLbl" type="hidden" value="">    
                 <div class="mb-3">
                     <label for="inputText" class="form-label">Title</label>
                     <input type="text" class="form-control" id="inputText" placeholder="precise title">
-                  </div>
-                  <div class="mb-3">
+                </div>
+                <div class="mb-3" id="getWalk">
+                    <label for="inputWalk" class="form-label">Choose / add a walk</label>
+                    <input id="inputWalk" class="form-control typeahead" type="text" placeholder="">
+                </div>        
+                <div class="mb-3">
                     <label for="formFile" class="form-label">Take photo</label>
                     <input class="form-control" type="file" id="formFile">
-                  </div>                  
+                </div>                  
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -108,15 +143,29 @@
         </div>
       </div>
 
+      <div id="loading-container">
+        <div class="loadingio-spinner-double-ring-4dols36ufwg" id="ws-loading">
+            <div class="ldio-6pd26u1x99x">
+            <div></div>
+            <div></div>
+            <div><div></div></div>
+            <div><div></div></div>
+        </div></div>
+    </div>
 
 </body>
 <script type="module">
 import {auth} from './modules/auth.js';
 import {omk} from './modules/omk.js';
+import {appUrl} from './modules/appUrl.js';
+
+
+
+
 let curPosi, curMedia, menu, dataMenu, unescoGraph, unescoVocabs=[], vs
         , unescoEdgePredicate, unescoRegions=[], medias,
         carousel, walks,
-        wM = 20, hM = 20, 
+        wM = 20, hM = 20, idItemSetWalk = 4499,
         a = new auth({'navbar':d3.select('#navbarMain'),
             mail:'samuel.szoniecky@univ-paris8.fr',
             apiOmk:'omk/api',
@@ -124,37 +173,95 @@ let curPosi, curMedia, menu, dataMenu, unescoGraph, unescoVocabs=[], vs
             key:'5lu3xO1uh0QeGYyQSUAztqmcHC3hzeat',        
         }),
         modalTakePhoto = new bootstrap.Modal(document.getElementById('modalTakePhoto'), 
-        {keyboard: false});
+            {keyboard: false}),
+        aUrl = new appUrl({
+            'tgtIn':d3.select("#inptUrl").node(),
+            'tgtBtn':d3.select("#url-addon"),
+            'url':new URL(document.location)
+        });
+
 a.getUser(u=>{
     console.log(u);
 });
-walks = a.omk.searchItems('item_set_id=4499');
+
+
+let rc, map = L.map('map');
+
+L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+rc = L.Routing.control({
+    waypoints: [
+        L.latLng(48.945515021571346, 2.3624837704718873),
+        L.latLng(55.653641447939265, 12.140908643986014),
+        L.latLng(39.08529335581509, 26.568977968147035),
+    ],
+    routeWhileDragging: false
+}).addTo(map);
+rc.hide();
+
+
+//init walks
+walks = a.omk.searchItems('item_set_id='+idItemSetWalk);
+//init modal take photo
+var sgtWalk = new Bloodhound({
+  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('o:title'),
+  queryTokenizer: Bloodhound.tokenizers.whitespace,
+  identify: function(obj) { 
+      return obj['o:id']; 
+    },
+  remote: {
+    url: a.omk.api+'items?item_set_id='+idItemSetWalk+'&property[0][property]=1&property[0][type]=in&property[0][text]=%QUERY&sort_by=title',
+    wildcard: '%QUERY'
+  }
+});
+$('#getWalk .typeahead').typeahead(null, {
+    name: 'omk-walks',
+    display: 'o:title',
+    source: sgtWalk,
+    templates: {
+        empty: function(context){
+            //document.getElementById('btnSendPhoto').style.display='none';  
+            document.getElementById('getWalkLbl').value=context.query;
+            document.getElementById('getWalkId').value=0;
+        },
+        suggestion: Handlebars.compile('<div><strong>{{o:title}}</strong> – {{o:id}}</div>')
+    }  
+    });
+$('#getWalk .typeahead').bind('typeahead:select', function(ev, suggestion) {
+    document.getElementById('getWalkId').value=suggestion["o:id"];
+    document.getElementById('getWalkLbl').value=suggestion["o:title"];
+    //document.getElementById('btnSendPhoto').style.display='block';  
+    });    
+
+//init take photo
 d3.select('#btnTakePhoto').on('click',showTakePhoto);
 d3.select('#btnSendPhoto').on('click',e=>{
-    let data = {'dcterms:title':document.getElementById("inputText").value,
-                'file':document.querySelector("#formFile").files[0]
-                };
-    a.omk.createRessource(data,(e,d)=>{
-        console.log(e,d);
-    }); 
+    let idWalk = document.getElementById("getWalkId").value;
+    if(idWalk=="0"){
+        //create walk
+        a.omk.createRessource({'dcterms:title':document.getElementById("getWalkLbl").value,
+                'o:item_set':idItemSetWalk},(d)=>{
+            walks.push(d);
+            document.getElementById("getWalkId").value=d['o:id'];
+            setMenu('#ddWalks',walks,'o:title',showWalk);
+            addTakePhoto(d);
+        }); 
+    }else{
+        addTakePhoto(walks.filter(w=>w['o:id']==idWalk)[0]);
+    }
 });
-
 
 Promise.all([d3.json('assets/data/menu.json'),
         d3.json('assets/data/unesco_graph_en.json'
     )]).then(datas=>{
     dataMenu=datas[0];
     unescoGraph = datas[1];
-    setSieve(null,dataMenu[0]);
+
     //update menus
-    d3.select('#ddWalks').selectAll('li').data(walks).enter().append('li')
-        .append('a').attr('class',"dropdown-item")
-        .html(d=>d['o:title'])
-        .on('click',showWalk);
-    d3.select('#ddSieves').selectAll('li').data(dataMenu).enter().append('li')
-        .append('a').attr('class',"dropdown-item")
-        .html(d=>d.name)
-        .on('click',setSieve);
+    setMenu('#ddWalks',walks,'o:title',showWalk);
+    setMenu('#ddSieves',dataMenu,'name',setSieve);
 
     //get concepts
     for (const key in unescoGraph.nodes) {
@@ -175,12 +282,44 @@ Promise.all([d3.json('assets/data/menu.json'),
     })
     //get type edge
     //unescoEdgePredicate = Array.from(d3.group(unescoGraph.edges, b => b.predicate), ([key, value]) => ({key, value})),
+
+    if(aUrl.params && aUrl.params.has('sieve'))setSieve(null,dataMenu.filter(m=>m['o:id']==aUrl.params.get('sieve'))[0]);
+    if(aUrl.params && aUrl.params.has('walk'))showWalk(null,walks.filter(w=>w['o:id']==aUrl.params.get('walk'))[0]);
+
+
     hideLoader();
 })
+function setMenu(s,data,lbl,fct){
+    d3.select(s).selectAll('li').data(data)
+      .join(
+        enter => enter.append('li')
+            .append('a').attr('class',"dropdown-item")
+            .html(d=>d[lbl])
+            .on('click',fct),
+        update => update.select('a').html(d=>d[lbl]),
+        exit => exit.remove()
+      );
+}
+
+function addTakePhoto(w){
+    let data = {'dcterms:title':document.getElementById("inputText").value,
+            'file':document.querySelector("#formFile").files[0]
+        };
+    a.omk.createRessource(data,(d)=>{
+        //add photo to the walk
+        let fd = a.omk.formatData({'dcterms:hasPart':{'rid':d['o:id']}});
+        if(w['dcterms:hasPart'])w['dcterms:hasPart'].push(fd['dcterms:hasPart'][0]);
+        else w['dcterms:hasPart']=fd['dcterms:hasPart'];
+        a.omk.updateRessource(w['o:id'],null,'items', w,'PATCH',rs=>{
+                console.log(rs);
+            })
+    }); 
+}
 function showTakePhoto(e){
     modalTakePhoto.show();
 }
 function setSieve(e,d){
+    aUrl.change('sieve',d['o:id']);
     showLoader();
     d3.json(d.sources).then(data=>{
         switch (d.function) {
@@ -211,7 +350,7 @@ function setSieve(e,d){
                 let updMedia = JSON.parse(JSON.stringify(curMedia)),
                     body = a.omk.formatData({'oa:hasBody':updMedia['oa:hasBody']});
                 updMedia['oa:hasBody']=body['oa:hasBody'];
-                a.omk.updateRessource(updMedia['o:id'],null,markersIsSave,'media',updMedia);
+                a.omk.updateRessource(updMedia['o:id'],null,'media',updMedia,'PATCH',markersIsSave);
                 menu.hideMenu();
             }
         });
@@ -221,17 +360,28 @@ function setSieve(e,d){
 function markersIsSave(d){
     console.log(d);
 }
-function showWalk(e,d){
-    //get medias from cocult site walk
-    showLoader();
+
+async function showWalk(e,d){
+    await showLoader();
+    aUrl.change('walk',d['o:id']);
     d3.select('#selectWalk').html(d['o:title']);
     if(!d.medias){
-        a.omk.getMedias(d);
+        //get medias from cocult site walk
+        a.omk.getMedias(d,'dcterms:hasPart');
         d.medias.forEach(m=>{
             if(m['oa:hasBody']){
-                m['oa:hasBody']=m['oa:hasBody'].map(b=>b['@value']?JSON.parse(b['@value']):b);
+                m['oa:hasBody']=m['oa:hasBody'].map(b=>b['@value']?JSON.parse(b['@value']):b);                
+            }
+            if(m["dcterms:spatial"]){
+                m.geo = ParseDMS(m["dcterms:spatial"][0]["@value"]);
             }
         })
+    }
+    //construct map
+    rc.setWaypoints([]);
+    if(d.medias.length){
+        let wp = d.medias.filter(m=>m.geo).map(m=>L.latLng(m.geo.lat,m.geo.lng));
+        rc.setWaypoints(wp);
     }
 
     d3.select('#carouselItems').selectAll('div').remove();
@@ -255,6 +405,7 @@ function showWalk(e,d){
             });
     myCarousel.addEventListener('slide.bs.carousel', event => {
         //show markers of slide
+        aUrl.change('media',event.to);
         curMedia = d.medias[(event.to)]
         updateMarkers(curMedia);
     })            
@@ -262,11 +413,34 @@ function showWalk(e,d){
     //show markers of first slide
     curMedia = d.medias[0]
     updateMarkers(curMedia);
+    if(aUrl.params && aUrl.params.has('media'))carousel.to(aUrl.params.get('media'));
 
     hideLoader();
 
 }
+
+//many thanks to https://stackoverflow.com/questions/1140189/converting-latitude-and-longitude-to-decimal-values
+function ParseDMS(input) {
+    var parts = input.split(/[^\d\w\.]+/);    
+    var lat = ConvertDMSToDD(parts[0], parts[2], parts[3], parts[4]);
+    var lng = ConvertDMSToDD(parts[5], parts[7], parts[8], parts[9]);
+
+    return {
+        lat : lat,
+        lng: lng,
+        pos : lat + ',' + lng
+    }
+}
+function ConvertDMSToDD(degrees, minutes, seconds, direction) {   
+    var dd = Number(degrees) + Number(minutes)/60 + Number(seconds)/(60*60);
+
+    if (direction == "S" || direction == "W") {
+        dd = dd * -1;
+    } // Don't do anything for N or E
+    return dd;
+}
 function updateMarkers(d){
+    if(d.geo)map.setView(new L.LatLng(d.geo.lat, d.geo.lng),18);
     if(!d['oa:hasBody'])return;
     d3.select('#markers'+d['o:id']).selectAll('div').data(d['oa:hasBody']).join(
             enter => {
@@ -313,7 +487,7 @@ function showMarkerData(e,d){
 function hideMarkerData(e){
     d3.select(e.currentTarget).style('display','none');
 }
-function showLoader() {
+async function showLoader() {
 	d3.select("#ws-loading").style("display", "inline-block")
 }
 function hideLoader() {

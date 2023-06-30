@@ -2,10 +2,15 @@ body {
     height: 100%;
     background-color: #000;
 }
+	.map {
+		width: 100%;
+		height: 100%;
+	}
+
 #dataviz{
     position: absolute;
-    width: 100%;
-    height: 100%;
+    width: 50%;
+    height: 50%;
     top: 60px;
     left: 0px;
 }
@@ -13,9 +18,12 @@ body {
     font-size: x-large;
 }
 #popup{
+	display: none;	
     padding: 3px;
     position: absolute;
     background-color: white;
+	border-color: black;
+	border: 2px;
 }
 .markers{
     position: absolute;

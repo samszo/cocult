@@ -1,8 +1,10 @@
 [{
+    "o:id":"-1",
     "name" : "UNESCO Intangible Cultural Heritage",
     "sources":"assets/data/menuUnesco.json",
     "function":"menuUnesco"
 },{
+    "o:id":"-2",
     "name" : "Emotional",
     "sources":"assets/data/menuEmotional.json"
 }]
