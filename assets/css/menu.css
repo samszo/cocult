@@ -9,10 +9,11 @@ body {
 
 #dataviz{
     position: absolute;
-    width: 50%;
-    height: 50%;
+    width: 80%;
+    height: 80%;
     top: 60px;
     left: 0px;
+	z-index:99999;
 }
 .emoji{
     font-size: x-large;
@@ -33,7 +34,11 @@ body {
 /* USE CSS for loading icon */
 /* loading icon */
 #loading-container{
-    text-align: center;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index:99999;
 }
 #ws-loading{
 	background-image: url('../img/logo-paragraphe-blanc.svg');

@@ -1,6 +1,6 @@
 [{
     "o:id":"-1",
-    "name" : "UNESCO Intangible Cultural Heritage",
+    "name" : "UNESCO ICH",
     "sources":"assets/data/menuUnesco.json",
     "function":"menuUnesco"
 },{

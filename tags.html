@@ -23,10 +23,11 @@
         
 </head>
 <body>    
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark border-bottom border-bottom-dark" data-bs-theme="dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
                 <img src="assets/img/logoeruagreen2.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+                <img src="assets/img/logo-paragraphe-blanc.svg" alt="Logo" width="86"  class="d-inline-block align-text-top">
                 CoCult
                 <i class="fa-solid fa-table-cells"></i>
                 <span id="selectSieve">Select a sieve</span>
@@ -164,7 +165,7 @@ import {appUrl} from './modules/appUrl.js';
 
 let curPosi, curMedia, menu, dataMenu, unescoGraph, unescoVocabs=[], vs
         , unescoEdgePredicate, unescoRegions=[], medias,
-        carousel, walks,
+        carousel, walks, curwait = 0,
         wM = 20, hM = 20, idItemSetWalk = 4499,
         a = new auth({'navbar':d3.select('#navbarMain'),
             mail:'samuel.szoniecky@univ-paris8.fr',
@@ -331,91 +332,98 @@ function setSieve(e,d){
         }
         d3.select("#dataviz").select('svg').remove();
         d3.select("#selectSieve").html(d.name);
-        //console.log(unescoVocabs);
+        //console.log(unescoVocabs);        
         menu  = new menuSunburst({
             'idCont': "dataviz",
+            'width':window.screen.width/3,
             'data' : data,
             'cbEndInit':'hide',
             'cbValidate' : function(selectedItems) {
-                console.log("selectedItems",selectedItems);
-                curMedia['oa:hasBody'].push({
-                    'actant':a.omk.mail,
-                    'sieves':d,
-                    'posi':curPosi,
-                    'data':selectedItems.map(s=>s.data),
-                    'timestamp':Date.now()
-                });
-                updateMarkers(curMedia);
-                //ste update data to omk
-                let updMedia = JSON.parse(JSON.stringify(curMedia)),
-                    body = a.omk.formatData({'oa:hasBody':updMedia['oa:hasBody']});
-                updMedia['oa:hasBody']=body['oa:hasBody'];
-                a.omk.updateRessource(updMedia['o:id'],null,'media',updMedia,'PATCH',markersIsSave);
-                menu.hideMenu();
+                saveMarkers(d, selectedItems);
             }
         });
         hideLoader();
     });    
 }
+function saveMarkers(d,selectedItems){
+    showLoader();
+    curMedia['oa:hasBody'].push({
+        'actant':a.omk.mail,
+        'sieves':d,
+        'posi':curPosi,
+        'data':selectedItems.map(s=>s.data),
+        'timestamp':Date.now()
+    });
+    updateMarkers(curMedia);
+    //ste update data to omk
+    let updMedia = JSON.parse(JSON.stringify(curMedia)),
+        body = a.omk.formatData({'oa:hasBody':updMedia['oa:hasBody']});
+    updMedia['oa:hasBody']=body['oa:hasBody'];
+    a.omk.updateRessource(updMedia['o:id'],null,'media',updMedia,'PATCH',markersIsSave);
+    menu.hideMenu();
+}
 function markersIsSave(d){
-    console.log(d);
+    hideLoader();
 }
 
-async function showWalk(e,d){
-    await showLoader();
+function showWalk(e,d){
+    showLoader();
     aUrl.change('walk',d['o:id']);
     d3.select('#selectWalk').html(d['o:title']);
-    if(!d.medias){
-        //get medias from cocult site walk
-        a.omk.getMedias(d,'dcterms:hasPart');
-        d.medias.forEach(m=>{
-            if(m['oa:hasBody']){
-                m['oa:hasBody']=m['oa:hasBody'].map(b=>b['@value']?JSON.parse(b['@value']):b);                
-            }
-            if(m["dcterms:spatial"]){
-                m.geo = ParseDMS(m["dcterms:spatial"][0]["@value"]);
-            }
-        })
-    }
-    //construct map
-    rc.setWaypoints([]);
-    if(d.medias.length){
-        let wp = d.medias.filter(m=>m.geo).map(m=>L.latLng(m.geo.lat,m.geo.lng));
-        rc.setWaypoints(wp);
-    }
+    setTimeout(function(){
+        if(!d.medias){
+            //get medias from cocult site walk
+            a.omk.getMedias(d,'dcterms:hasPart');
+            d.medias.forEach(m=>{
+                if(m['oa:hasBody']){
+                    m['oa:hasBody']=m['oa:hasBody'].map(b=>b['@value']?JSON.parse(b['@value']):b);                
+                }
+                if(m["dcterms:spatial"]){
+                    m.geo = ParseDMS(m["dcterms:spatial"][0]["@value"]);
+                }
+            })
+        }
+    
+        //construct map
+        rc.setWaypoints([]);
+        if(d.medias.length){
+            let wp = d.medias.filter(m=>m.geo).map(m=>L.latLng(m.geo.lat,m.geo.lng));
+            rc.setWaypoints(wp);
+        }
 
-    d3.select('#carouselItems').selectAll('div').remove();
-    let myCarousel = document.querySelector('#carouselCocult'),
-        slides = d3.select('#carouselItems').selectAll('div').data(d.medias).enter().append('div')
-        .attr("class",(d,i)=>"carousel-item"+(i==0 ? ' active' : ' '));
-    slides.append('img')
-        .attr('src',d=>d.thumbnail_display_urls.large)
-        .attr('class',"d-block w-100")
-        .on('click',(e,d)=>{
-            curPosi = {'x':e.layerX,'y':e.layerY};
-            curMedia = d;
-            if(!curMedia['oa:hasBody'])curMedia['oa:hasBody'] = []
-            else curMedia['oa:hasBody']=curMedia['oa:hasBody'].map(b=>b['@value']?JSON.parse(b['@value']):b);
-            menu.showNew();
-        });
-    slides.append('div').attr('class','clearfix markers').attr('id',d=>'markers'+d['o:id']);
-    carousel = new bootstrap.Carousel(myCarousel, {
-                interval : 3000,
-                ride : false
+        d3.select('#carouselItems').selectAll('div').remove();
+        let myCarousel = document.querySelector('#carouselCocult'),
+            slides = d3.select('#carouselItems').selectAll('div').data(d.medias).enter().append('div')
+            .attr("class",(d,i)=>"carousel-item"+(i==0 ? ' active' : ' '));
+        slides.append('img')
+            .attr('src',d=>d.thumbnail_display_urls.large)
+            .attr('class',"d-block w-100")
+            .on('click',(e,d)=>{
+                curPosi = {'x':e.layerX,'y':e.layerY};
+                curMedia = d;
+                if(!curMedia['oa:hasBody'])curMedia['oa:hasBody'] = []
+                else curMedia['oa:hasBody']=curMedia['oa:hasBody'].map(b=>b['@value']?JSON.parse(b['@value']):b);
+                menu.showNew();
             });
-    myCarousel.addEventListener('slide.bs.carousel', event => {
-        //show markers of slide
-        aUrl.change('media',event.to);
-        curMedia = d.medias[(event.to)]
+        slides.append('div').attr('class','clearfix markers').attr('id',d=>'markers'+d['o:id']);
+        carousel = new bootstrap.Carousel(myCarousel, {
+                    interval : 3000,
+                    ride : false
+                });
+        myCarousel.addEventListener('slide.bs.carousel', event => {
+            //show markers of slide
+            aUrl.change('media',event.to);
+            curMedia = d.medias[(event.to)]
+            updateMarkers(curMedia);
+        })            
+        //carousel.cycle();    
+        //show markers of first slide
+        curMedia = d.medias[0]
         updateMarkers(curMedia);
-    })            
-    //carousel.cycle();    
-    //show markers of first slide
-    curMedia = d.medias[0]
-    updateMarkers(curMedia);
-    if(aUrl.params && aUrl.params.has('media'))carousel.to(aUrl.params.get('media'));
+        if(aUrl.params && aUrl.params.has('media'))carousel.to(aUrl.params.get('media'));
 
-    hideLoader();
+        hideLoader();
+    }, 1);    
 
 }
 
@@ -488,10 +496,15 @@ function hideMarkerData(e){
     d3.select(e.currentTarget).style('display','none');
 }
 async function showLoader() {
+    curwait ++;
 	d3.select("#ws-loading").style("display", "inline-block")
 }
 function hideLoader() {
-	d3.select("#ws-loading").style("display", "none")
+    curwait --;
+	if(curwait<1){
+        d3.select("#ws-loading").style("display", "none");
+        curwait=0;
+    }       
 }
 
 

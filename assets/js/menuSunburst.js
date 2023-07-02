@@ -42,7 +42,7 @@ class menuSunburst {
 		*/		
         var selectedItems = [], svgMenu, objEW, color
         ,format = d3.format(",d")
-        ,radius = this.width / 6
+        ,radius = me.width / 6, radiusBtn = 6
         ,arc = d3.arc()
                 .startAngle(d => d.x0)
                 .endAngle(d => d.x1)
@@ -71,8 +71,8 @@ class menuSunburst {
 				.style("width", "96%")
 				.style("height", "96%")
 				.style("position","absolute")
-				.attr('viewBox',"0 0 "+me.width+" "+me.width)
-				.style("font", "5px sans-serif");
+				.attr('viewBox',"0 0 "+me.width+" "+me.width);
+				//.style("font", "5px sans-serif");
 				//.style("overflow-wrap", "break-word"); // does not work
 
 		me.g = svgMenu.append("g")
@@ -112,7 +112,7 @@ class menuSunburst {
 			.on("click",clickOnArea);
 		
 		me.g.append("circle")
-			.attr("r", "10")
+			.attr("r", radius/2)
 			.attr("stroke", "black")
 			.attr("stroke-width", "0.5")
 			.attr("fill", "white")
@@ -121,10 +121,10 @@ class menuSunburst {
 			.on("click", clickOnValidate);
 			
 		me.g.append("text")
-			.attr("dx", "-8")
-			.attr("dy", "2")
+			.attr("text-anchor", "middle")
+			.attr("alignment-baseline","middle")
 			.style("cursor", "pointer")
-			.text("Valider")
+			.text("SAVE")
 			.on("click", function(d) {
 				clickOnValidate(this, d);
 			});
@@ -141,11 +141,11 @@ class menuSunburst {
 				.data(descendants)
 				.join("text")
 				.attr('class',d=>d.data.class)
-				.attr("dy", "0.35em")
+				.attr("dy", "1em")
 				.attr("fill-opacity", d => +labelVisible(d.current))
 				.attr("transform", d => labelTransform(d.current))
-				.text(d => d.data.name);
-		wrap(me.label, 30);
+				.text(d => d.data.name);		
+		wrap(me.label, radius/6);
 		
 		me.checkboxes = dataLabel
 				.selectAll("circle")
@@ -153,7 +153,7 @@ class menuSunburst {
 				.join("circle")
 				.attr("cx", "0")
 				.attr("cy", "0")
-				.attr("r", "2")
+				.attr("r", radiusBtn)
 				.attr("stroke", "black")
 				.attr("stroke-width", "0.5")
 				.attr("fill", "white")
@@ -164,6 +164,12 @@ class menuSunburst {
 				.on("click", clickedOnCheckbox);
 				
 		if(me.cbEndInit)call(me.cbEndInit);
+
+
+		function measureTextWidth(text){
+			const context = document.createElement("canvas").getContext("2d");
+			return context.measureText(text).width;
+		}
 
 		function wrap(text, width) {
 			text.each(function() {
@@ -180,7 +186,7 @@ class menuSunburst {
 				while (word = words.pop()) {
 					line.push(word);
 					tspan.text(line.join(" "));
-					if (tspan.node().getComputedTextLength() > width) {
+					if (measureTextWidth(tspan.text()) > width) {
 						if (line.length == 1) {
 							tspan.text(line.join(" "));
 							line = []
@@ -220,7 +226,7 @@ class menuSunburst {
 		function checkboxTransform(d) {
 			const x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
 			const y = (d.y0 + d.y1) / 2 * radius;
-			return `rotate(${x - 90}) translate(${y-17},0) rotate(${x < 180 ? 0 : 180})`;
+			return `rotate(${x - 90}) translate(${y-30},0) rotate(${x < 180 ? 0 : 180})`;
 		}
 		function clickedOnCheckbox(e, data) {		
 			var checkbox = d3.select(e.currentTarget);

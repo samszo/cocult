@@ -52,7 +52,7 @@ export class omk {
             return r;
         }
 
-        this.getMedias=function(p,linkMedia=''){
+        this.getMedias= async function(p,linkMedia=''){
             p.medias = [];
             p['o:media'].forEach(m=>{
                 p.medias.push(syncRequest(m['@id']))
