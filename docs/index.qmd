@@ -1,6 +1,6 @@
 # Introduction
 
-Le dispositif numérique que nous avons conçu et développé dans le cadre du projet CoCult au sein du programme scientifique EURUA a pour ambition de facilité le partage des cultures dans un territoire. Il répond aux difficultés rencontrées lors du l'utilisation des outils déjà disponibles comme Historipin ou PhotoMap qui ne sont pas intégrée dans un écosystème numérique ouvert et dédié au Linked Open Data. Par exemple, nous ne pouvions pas avec ces outils :
+Le dispositif numérique que nous avons conçu et développé dans le cadre du projet CoCult au sein du programme scientifique [ERUA](https://erua-eui.eu/2023/06/09/communities-of-cultural-commonalities-of-paris-and-mytilene/) a pour ambition de faciliter le partage des cultures dans un territoire. Ce nouvel outil répond aux difficultés rencontrées lors du l'utilisation des outils déjà disponibles comme Historipin ou PhotoMap. Par exemple, nous ne pouvions pas avec ces outils :
 
 -   partager facilement un espace commun
 
@@ -8,16 +8,22 @@ Le dispositif numérique que nous avons conçu et développé dans le cadre du p
 
 -   créer des itinéraires
 
-Pour répondre à ces besoins, nous avons conçu un environnement numérique accessible à l'adresse suivante :
+-   intégrer les données dans un écosystème numérique ouvert et dédié au Linked Open Data
 
-Il a été développé dans un écosystème Web qui prend en compte une interface adaptable à toutes les écrans, les recommandations du Linked Open Data et du logiciel libre. Ce prototype est une application Web qui fonctionne en relation avec une base de données Omeka S pour lire, enregistrer, mettre à jour et supprimer les données. Tous les codes informatiques nécessaire à son fonctionnement sont accessibles ici :
+Pour répondre à ces besoins, nous avons conçu un environnement numérique accessible à l'adresse suivante : <https://artnum.univ-paris8.fr/cocult/tags.html>
 
-## Principes du prototype CoCult
+Il a été développé dans un écosystème Web qui prend en compte une interface adaptable à toutes les écrans, les recommandations du Linked Open Data et du logiciel libre. Ce prototype est une application Web qui fonctionne en relation avec une base de données Omeka S pour lire, enregistrer, mettre à jour et supprimer les données. Tous les codes informatiques nécessaire à son fonctionnement sont accessibles ici : <https://github.com/samszo/cocult/>
 
-les principes FAIR et de la science ouverte
+## Principes et objectifs du prototype CoCult
 
-Le premier principe de ce prototype est de récolté des photos dans un territoire à partir d'un téléphone portable connecté au réseau des données mobiles et au système de géolocalisation GPS. Ces deux conditions devront sans doute être modifiées pour envisager un usage sans connexion au réseau mobile ni au GPS. Le second principe consiste à associer les photos à un itinéraire particulier afin de tracer un parcour dans un territoire. Le troisième principe est la description des photos avec un vocubulaire formalisé afin de rendre interopérables ces descriptions. Ce vocubalaire est accessible par un menu circulaire à plusieurs niveaux que nous appellons crible en référence aux différents travaux que nous avons menés dans ce domaine (@szoniecky2020).
+Premièrement, nous adoptons les principes FAIR de la science ouverte : <https://www.go-fair.org/fair-principles/>
 
-Dans ce projet, nous avons défini deux cribles mais une infinité d'autre sont possibles. Le premier crible reprend la classification proposée par l'UNESCO pour décrire les dangers auxquels le patrimoine immatériel est soumis
+Le premier objectif de ce prototype est de récolté des photos dans un territoire à partir d'un téléphone portable connecté au réseau des données mobiles et au système de géolocalisation GPS. Ces deux conditions devront sans doute être modifiées pour envisager un usage sans connexion au réseau mobile ni au GPS.
+
+Le second objectif consiste à associer les photos à un itinéraire particulier afin de tracer un parcour dans un territoire.
+
+Le troisième objectif est la description des photos avec un vocabulaire formalisé afin de rendre interopérables ces descriptions. Ce vocubalaire est accessible par un menu circulaire à plusieurs niveaux que nous appellons crible en référence aux différents travaux que nous avons menés dans ce domaine (@szoniecky2020).
+
+Dans ce projet, nous avons défini deux cribles mais une infinité d'autre sont possibles. Le premier crible reprend la classification proposée par l'UNESCO pour décrire les dangers auxquels le patrimoine immatériel est soumis :
 
 La vidéo suivante montre comment utiliser le prototype pour créer un itinéraire à partir de photos et descrire ces photos avec plusieurs cribles.
