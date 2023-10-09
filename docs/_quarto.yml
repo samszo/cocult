@@ -1,0 +1,21 @@
+project:
+  type: book
+
+book:
+  title: "Cocult prototype"
+  author: "Samuel Szoniecky"
+  date: "10/5/2023"
+  chapters:
+    - index.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+
+
+

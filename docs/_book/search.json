@@ -1,0 +1,16 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Cocult prototype",
+    "section": "",
+    "text": "1 Introduction\nLe dispositif numérique que nous avons conçu et développé dans le cadre du projet CoCult au sein du programme scientifique EURUA a pour ambition de facilité le partage des cultures dans un territoire. Il répond aux difficultés rencontrées lors du l’utilisation des outils déjà disponibles comme Historipin ou PhotoMap qui ne sont pas intégrée dans un écosystème numérique ouvert et dédié au Linked Open Data. Par exemple, nous ne pouvions pas avec ces outils :\nPour répondre à ces besoins, nous avons conçu un environnement numérique accessible à l’adresse suivante : Il a été développé dans un écosystème Web qui prend en compte une interface adaptable à toutes les écrans, les recommandations du Linked Open Data et du logiciel libre. Ce prototype est une application Web qui fonctionne en relation avec une base de données Omeka S pour lire, enregistrer, mettre à jour et supprimer les données. Tous les codes informatiques nécessaire à son fonctionnement sont accessibles ici :"
+  },
+  {
+    "objectID": "index.html#principes-du-prototype-cocult",
+    "href": "index.html#principes-du-prototype-cocult",
+    "title": "Cocult prototype",
+    "section": "1.1 Principes du prototype CoCult",
+    "text": "1.1 Principes du prototype CoCult\nLe premier principe de ce prototype est de récolté des photos dans un territoire à partir d’un téléphone portable connecté au réseau des données mobiles et au système de géolocalisation GPS. Ces deux conditions devront sans doute être modifiées pour envisager un usage sans connexion au réseau mobile ni au GPS. Le second principe consiste à associer les photos à un itinéraire particulier afin de tracer un parcour dans un territoire. Le troisième principe est la description des photos avec un vocubulaire formalisé afin de rendre interopérables ces descriptions. Ce vocubalaire est accessible par un menu circulaire à plusieur niveau que nous appellons crible en référence aux différents travaux que nous avons menés dans ce domaine Szoniecky (2020)\n\n\n\n\nSzoniecky, Samuel. 2020. “Conception d’un crible pour mesurer collectivement les impacts écologiques de l’activité.” Les Cahiers du numerique Vol. 16 (2): 175–99. https://www.cairn.info/revue-les-cahiers-du-numerique-2020-2-page-175.htm."
+  }
+]
