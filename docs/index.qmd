@@ -22,8 +22,16 @@ Le premier objectif de ce prototype est de récolté des photos dans un territoi
 
 Le second objectif consiste à associer les photos à un itinéraire particulier afin de tracer un parcour dans un territoire.
 
-Le troisième objectif est la description des photos avec un vocabulaire formalisé afin de rendre interopérables ces descriptions. Ce vocubalaire est accessible par un menu circulaire à plusieurs niveaux que nous appellons crible en référence aux différents travaux que nous avons menés dans ce domaine (@szoniecky2020).
+Le troisième objectif est la description des photos avec un vocabulaire formalisé afin de rendre interopérables ces descriptions. Ce vocabulaire est accessible par un menu circulaire à plusieurs niveaux que nous appelons un crible en référence aux différents travaux que nous avons menés dans ce domaine (@szoniecky2020).
 
-Dans ce projet, nous avons défini deux cribles mais une infinité d'autre sont possibles. Le premier crible reprend la classification proposée par l'UNESCO pour décrire les dangers auxquels le patrimoine immatériel est soumis :
+Dans ce projet, nous avons défini deux cribles mais une infinité d'autres pourront être défini dans une nouvelle version de l'outil. Le premier crible reprend la classification proposée par l'UNESCO pour décrire les dangers auxquels le patrimoine immatériel est soumis :
 
-La vidéo suivante montre comment utiliser le prototype pour créer un itinéraire à partir de photos et descrire ces photos avec plusieurs cribles.
+![Cribles Unesco dangers patrimoine immatériel](images/localhost_cocult_tags.html.png){fig-align="center"}
+
+Le second crible propose une catégorisation émotionnelle du document :
+
+![Crible évaluation émotionnelle](images/localhost_cocult_tags.cribleEmo.png){fig-alt="Crible évaluation émotionnelle" fig-align="center"}
+
+Le principe de catégorisation d'une image est très simple, il consiste à choisir dans le menu "sieves" la grille de catégorisation, puis de cliquer sur le point de l'image à catégoriser pour faire apparaître le menu circulaire. L'utilisateur coche les catégories qu'il souhaite et enfin enregistre son choix. Les informations sont alors conserver dans la base de données.
+
+La vidéo suivante montre comment utiliser le prototype pour créer un itinéraire à partir de photos et décrire ces photos avec plusieurs cribles.
