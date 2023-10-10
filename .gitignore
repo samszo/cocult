@@ -7,3 +7,5 @@ omk/
 assets/.DS_Store
 bdd/files.zip
 bdd/modules.zip
+bdd/omk_cocult.zip
+.gitignore
