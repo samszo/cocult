@@ -143,7 +143,7 @@ div.csl-indent {
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a>
   <ul class="collapse">
-  <li><a href="#principes-du-prototype-cocult" id="toc-principes-du-prototype-cocult" class="nav-link" data-scroll-target="#principes-du-prototype-cocult"><span class="header-section-number">1.1</span> Principes du prototype CoCult</a></li>
+  <li><a href="#principes-et-objectifs-du-prototype-cocult" id="toc-principes-et-objectifs-du-prototype-cocult" class="nav-link" data-scroll-target="#principes-et-objectifs-du-prototype-cocult"><span class="header-section-number">1.1</span> Principes et objectifs du prototype CoCult</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -182,16 +182,37 @@ div.csl-indent {
 
 <section id="introduction" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
-<p>Le dispositif numérique que nous avons conçu et développé dans le cadre du projet CoCult au sein du programme scientifique EURUA a pour ambition de facilité le partage des cultures dans un territoire. Il répond aux difficultés rencontrées lors du l’utilisation des outils déjà disponibles comme Historipin ou PhotoMap qui ne sont pas intégrée dans un écosystème numérique ouvert et dédié au Linked Open Data. Par exemple, nous ne pouvions pas avec ces outils :</p>
+<p>Le dispositif numérique que nous avons conçu et développé dans le cadre du projet CoCult au sein du programme scientifique <a href="https://erua-eui.eu/2023/06/09/communities-of-cultural-commonalities-of-paris-and-mytilene/">ERUA</a> a pour ambition de faciliter le partage des cultures dans un territoire. Ce nouvel outil répond aux difficultés rencontrées lors du l’utilisation des outils déjà disponibles comme Historipin ou PhotoMap. Par exemple, nous ne pouvions pas avec ces outils :</p>
 <ul>
 <li><p>partager facilement un espace commun</p></li>
 <li><p>indexer les documents ou leurs parties avec un vocabulaire formaliser</p></li>
 <li><p>créer des itinéraires</p></li>
+<li><p>intégrer les données dans un écosystème numérique ouvert et dédié au Linked Open Data</p></li>
 </ul>
-<p>Pour répondre à ces besoins, nous avons conçu un environnement numérique accessible à l’adresse suivante : Il a été développé dans un écosystème Web qui prend en compte une interface adaptable à toutes les écrans, les recommandations du Linked Open Data et du logiciel libre. Ce prototype est une application Web qui fonctionne en relation avec une base de données Omeka S pour lire, enregistrer, mettre à jour et supprimer les données. Tous les codes informatiques nécessaire à son fonctionnement sont accessibles ici :</p>
-<section id="principes-du-prototype-cocult" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="principes-du-prototype-cocult"><span class="header-section-number">1.1</span> Principes du prototype CoCult</h2>
-<p>Le premier principe de ce prototype est de récolté des photos dans un territoire à partir d’un téléphone portable connecté au réseau des données mobiles et au système de géolocalisation GPS. Ces deux conditions devront sans doute être modifiées pour envisager un usage sans connexion au réseau mobile ni au GPS. Le second principe consiste à associer les photos à un itinéraire particulier afin de tracer un parcour dans un territoire. Le troisième principe est la description des photos avec un vocubulaire formalisé afin de rendre interopérables ces descriptions. Ce vocubalaire est accessible par un menu circulaire à plusieur niveau que nous appellons crible en référence aux différents travaux que nous avons menés dans ce domaine <span class="citation" data-cites="szoniecky2020">Szoniecky (<a href="references.html#ref-szoniecky2020" role="doc-biblioref">2020</a>)</span></p>
+<p>Pour répondre à ces besoins, nous avons conçu un environnement numérique accessible à l’adresse suivante : <a href="https://artnum.univ-paris8.fr/cocult/tags.html" class="uri">https://artnum.univ-paris8.fr/cocult/tags.html</a></p>
+<p>Il a été développé dans un écosystème Web qui prend en compte une interface adaptable à toutes les écrans, les recommandations du Linked Open Data et du logiciel libre. Ce prototype est une application Web qui fonctionne en relation avec une base de données Omeka S pour lire, enregistrer, mettre à jour et supprimer les données. Tous les codes informatiques nécessaire à son fonctionnement sont accessibles ici : <a href="https://github.com/samszo/cocult/" class="uri">https://github.com/samszo/cocult/</a></p>
+<section id="principes-et-objectifs-du-prototype-cocult" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="principes-et-objectifs-du-prototype-cocult"><span class="header-section-number">1.1</span> Principes et objectifs du prototype CoCult</h2>
+<p>Premièrement, nous adoptons les principes FAIR de la science ouverte : <a href="https://www.go-fair.org/fair-principles/" class="uri">https://www.go-fair.org/fair-principles/</a></p>
+<p>Le premier objectif de ce prototype est de récolté des photos dans un territoire à partir d’un téléphone portable connecté au réseau des données mobiles et au système de géolocalisation GPS. Ces deux conditions devront sans doute être modifiées pour envisager un usage sans connexion au réseau mobile ni au GPS.</p>
+<p>Le second objectif consiste à associer les photos à un itinéraire particulier afin de tracer un parcour dans un territoire.</p>
+<p>Le troisième objectif est la description des photos avec un vocabulaire formalisé afin de rendre interopérables ces descriptions tout en exprimant un point de vue particulier. Ce vocabulaire modélise une grille de catégorisation accessible par un menu circulaire à plusieurs niveaux que nous appelons un crible en référence aux différents travaux que nous avons menés dans ce domaine (<span class="citation" data-cites="szoniecky2020">Szoniecky (<a href="references.html#ref-szoniecky2020" role="doc-biblioref">2020</a>)</span>).</p>
+<p>Dans ce projet, nous avons défini deux cribles mais une infinité d’autres pourront être modélisés dans une nouvelle version de l’outil. Le premier crible reprend la classification proposée par l’UNESCO pour décrire les dangers auxquels le patrimoine immatériel est soumis :</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/localhost_cocult_tags.html.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Cribles Unesco dangers patrimoine immatériel</figcaption>
+</figure>
+</div>
+<p>Le second crible propose une catégorisation émotionnelle du document :</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/localhost_cocult_tags.cribleEmo.png" class="img-fluid figure-img" alt="Crible évaluation émotionnelle"></p>
+<figcaption class="figure-caption">Crible évaluation émotionnelle</figcaption>
+</figure>
+</div>
+<p>Le principe de catégorisation d’une image est très simple, il consiste à choisir dans le menu “sieves” la grille de catégorisation, puis de cliquer sur le point de l’image à catégoriser pour faire apparaître le menu circulaire. L’utilisateur coche les catégories qu’il souhaite et enfin enregistre son choix. Les informations sont alors conserver dans la base de données.</p>
+<p>La base de données que nous utilisons est modélisée dans Omeka S pour rendre disponible les itinéraires, les étapes et les annotations pour chaque étapes.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">

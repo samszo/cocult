@@ -35,5 +35,3 @@ Le second crible propose une catégorisation émotionnelle du document :
 Le principe de catégorisation d'une image est très simple, il consiste à choisir dans le menu "sieves" la grille de catégorisation, puis de cliquer sur le point de l'image à catégoriser pour faire apparaître le menu circulaire. L'utilisateur coche les catégories qu'il souhaite et enfin enregistre son choix. Les informations sont alors conserver dans la base de données.
 
 La base de données que nous utilisons est modélisée dans Omeka S pour rendre disponible les itinéraires, les étapes et les annotations pour chaque étapes.
-
-La vidéo suivante montre comment utiliser le prototype pour créer un itinéraire à partir de photos et décrire ces photos avec plusieurs cribles.
